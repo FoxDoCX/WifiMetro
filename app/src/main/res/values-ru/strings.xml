@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WifiMetro</string>
+    <string name="theme_switch_dark">Тёмная тема</string>
+    <string name="theme_switch_light">Светлая тема</string>
+    <string name="app_tagline">Автологин в бесплатный Wi‑Fi Москвы</string>
+    <string name="app_signature">WifiMetro · сборка FoxDoC</string>
+    <string name="build_author_label">Автор сборки</string>
+    <string name="build_author_info">FoxDoC</string>
+
+    <string name="report">Отправить отчет</string>
+    <string name="report_email_subject" formatted="false">Версия %s</string>
+    <string name="report_choose_client">Выберите E-mail клиент или мессенджер…</string>
+
+    <string name="retry">Попробовать снова</string>
+    <string name="connect">Подключиться</string>
+    <string name="in_background">В фоне</string>
+    <string name="ok">Хорошо</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="install">Установить</string>
+    <string name="ignore_short">Игнор.</string>
+    <string name="ignore">Игнорировать</string>
+    <string name="later">Позже</string>
+    <string name="error" formatted="false">Ошибка: %s</string>
+    <string name="not">не</string>
+    <string name="try_out_of" formatted="false">попытка %d из %d</string>
+    <string name="version" formatted="false">Версия: %s</string>
+    <string name="show_debug_log">Показать подробные сообщения</string>
+    <string name="clipboard_copy">Текст скопирован в буфер обмена</string>
+    <string name="screen_clear">Очистить экран</string>
+    <string name="warning">Предупреждение</string>
+    <string name="about">О программе</string>
+    <string name="log">Лог</string>
+    <string name="download">Скачать</string>
+
+    <string name="form_login">Логин:</string>
+    <string name="form_password">Пароль:</string>
+
+    <string name="pref_category_main">Настройки</string>
+    <string name="pref_category_quick">Быстрые действия</string>
+    <string name="pref_category_connection">Подключение</string>
+    <string name="pref_category_connection_summary">Параметры фонового автологина</string>
+    <string name="pref_category_notifications">Уведомления</string>
+    <string name="pref_category_notifications_summary">Какие оповещения показывать</string>
+    <string name="pref_category_updater">Обновления</string>
+    <string name="pref_category_contributors">Благодарности</string>
+
+    <string name="pref_autoconnect">Автоматическая авторизация</string>
+    <string name="pref_autoconnect_summary">Подключаться автоматически при соединении с поддерживаемыми сетями Wi-Fi</string>
+
+    <string name="pref_wifi_reconnect">Переподключение к Wi-Fi</string>
+    <string name="pref_wifi_reconnect_summary">
+        Пытаться восстановить соединение с сетью Wi-Fi автоматически при потере сигнала или сбросе соединения. (Android &lt; 10)
+    </string>
+    <string name="pref_wifi_bind">Привязка процесса к сети</string>
+    <string name="pref_wifi_bind_summary">Предотвращает утечку трафика через мобильную сеть или VPN. (Android ≥ 5)</string>
+
+    <string name="pref_internet_check">Мониторинг соединения</string>
+    <string name="pref_internet_check_summary">Проверять соединение с интернетом каждые 10 секунд и перезапускать подключение при ошибке.</string>
+
+    <string name="pref_notify_fail">Неудачное подключение</string>
+    <string name="pref_notify_fail_summary">Уведомлять при возникновении ошибки</string>
+    <string name="pref_notify_alternative">Альтернативные иконки</string>
+    <string name="pref_notify_alternative_summary">
+        Использовать белые иконки на Android старше, чем 5.0, и цветные иконки на Android 5.0 и новее (поддерживается не всегда).
+    </string>
+    <string name="pref_notify_success_lock">Неудаляемое уведомление</string>
+    <string name="pref_notify_success_lock_summary">
+        Сделать уведомление об успехе неудаляемым (уведомление будет отображаться, пока подключена сеть Wi-Fi)
+    </string>
+    <string name="pref_notify_news">Сообщения от разработчика</string>
+    <string name="pref_notify_news_summary">В случае проблем, я смогу сообщить вам о том, что происходит с приложением.</string>
+
+    <string name="pref_retry_delay">Задержка между попытками</string>
+    <string name="pref_retry_delay_summary">Количество секунд, выжидаемых перед повторной попыткой (по умолчанию: 5)</string>
+    <string name="pref_retry_count">Количество попыток</string>
+    <string name="pref_retry_count_summary">Количество повторных попыток при ошибке (по умолчанию: 3)</string>
+
+    <string name="pref_ip_wait">Ожидание IP адреса</string>
+    <string name="pref_ip_wait_summary">
+        Количество секунд, в течение которых приложение ожидает получение IP адреса. Если установлен 0, то приложение
+        будет ждать до тех пор, пока устройство не отключится от сети. (по умолчанию: 0)
+    </string>
+
+    <string name="pref_updater_enabled">Проверять автоматически</string>
+    <string name="pref_updater_enabled_summary">Проверять наличие обновлений при запуске приложения</string>
+    <string name="pref_updater_check">Проверить наличие обновлений</string>
+    <string name="pref_updater_check_summary">Проверить наличие новых версий приложения на сервере разработчика</string>
+    <string name="pref_updater_branch">Ветка обновления</string>
+    <string name="pref_updater_branch_summary">
+        Ветки обновления отличаются набором функций и частотой обновлений. Нажмите сюда, чтобы узнать подробности или выбрать ветку.
+    </string>
+
+    <string name="update_available">Доступно обновление</string>
+    <string name="update_not_available">Нет доступных обновлений</string>
+    <string name="update_not_available_message">Новые версии будут появляться здесь по мере их публикации.</string>
+
+    <string name="developer">О проекте</string>
+    <string name="developer_info">WifiMetro by FoxDoC — на базе open-source MosMetro (GPL-3.0)</string>
+    <string name="developer_github_repo">Организация GitHub</string>
+    <string name="developer_vkontakte">Сообщество ВКонтакте</string>
+    <string name="developer_telegram_channel">Канал Telegram</string>
+    <string name="developer_telegram">Группа Telegram</string>
+
+    <string name="manual_connection">Ручное подключение</string>
+    <string name="manual_connection_summary">Вы можете подключиться здесь, если приложение игнорирует состояние Wi-Fi</string>
+    <string name="pref_networks">Сети Wi‑Fi</string>
+    <string name="pref_networks_summary">Выбор поддерживаемой сети и ручной вход</string>
+    <string name="pref_networks_current">Текущий Wi‑Fi</string>
+    <string name="pref_networks_current_summary">Подключено к %1$s (поддерживается)</string>
+    <string name="pref_networks_current_unknown">Подключено к %1$s (нет в списке / неизвестно)</string>
+    <string name="pref_networks_connect_auto">Подключиться (текущая сеть)</string>
+    <string name="pref_networks_connect_auto_summary">Принудительный вход в сеть, к которой вы подключены сейчас</string>
+    <string name="pref_networks_item_summary">Нажмите, чтобы запустить ручной вход для этой сети</string>
+    <string name="pref_networks_item_connected">Сейчас подключено — нажмите, чтобы переподключить</string>
+    <string name="pref_networks_cat_transport">Транспорт (метро / МЦК / наземный)</string>
+    <string name="pref_networks_cat_city">Городской Wi‑Fi</string>
+    <string name="pref_networks_cat_mts">МТС Wi‑Fi</string>
+    <string name="pref_networks_cat_other">Прочее</string>
+    <string name="manual_connection_shortcut">Создать ярлык</string>
+
+    <string name="view_log">Посмотреть лог</string>
+    <string name="view_log_summary">Нажмите сюда, чтобы посмотреть логи предыдущих запусков.</string>
+
+    <string name="shortcut_background">Подключаться в фоне</string>
+    <string name="shortcut_force">Даже если название сети неизвестно</string>
+
+    <string name="auth_connecting" formatted="false">Подключение к сети %s</string>
+    <string name="algorithm_name" formatted="false">Название алгоритма: %s</string>
+    <string name="auth_waiting">Ожидание…</string>
+    <string name="auth_checking_connection">Проверка доступа в интернет</string>
+    <string name="auth_already_connected">Уже подключено</string>
+    <string name="auth_init">Инициализация процесса авторизации</string>
+    <string name="auth_check">Проверка состояния авторизации</string>
+    <string name="auth_finish">Завершение процесса авторизации</string>
+    <string name="auth_unknown_redirect">Получено неизвестное перенаправление. Пытаюсь определить алгоритм…</string>
+    <string name="auth_algorithm_switch">Переключаюсь на другой алгоритм: %s (это не ошибка)</string>
+    <string name="auth_redirect">Получение перенаправления</string>
+    <string name="auth_auth_page">Получение страницы авторизации</string>
+    <string name="auth_auth_form">Отправка формы авторизации</string>
+    <string name="auth_connected">Соединение успешно установлено :3</string>
+    <string name="auth_provider_check">Определение провайдера…</string>
+
+    <string name="auth_error_connection">доступ в интернет отсутствует</string>
+    <string name="auth_error_redirect">перенаправление не получено</string>
+    <string name="auth_error_auth_page">страница авторизации не получена</string>
+    <string name="auth_error_not_registered">
+        устройство не зарегистрировано в сети\n Пожалуйста, зайдите на сайт http://wi-fi.ru
+        и пройдите регистрацию, введя свой номер телефона в появившуюся форму для получения СМС с
+        дальнейшими инструкциями. Это необходимо сделать только один раз, после чего приложение начнет
+        нормально работать.\n Примечание: Разработчик этого приложения не имеет никакого отношения к регистрации.
+        Регистрацией, как и самой сетью, занимается компания МаксимаТелеком (http://maximatelecom.ru).
+    </string>
+    <string name="auth_error_mainet_credentials">
+        Для подключения к этой сети необходимо указать логин и пароль. Пожалуйста проверьте \"MAInet (wifi.mai.ru)\" в меню \"Настройки подключения\".
+    </string>
+    <string name="auth_error_bmstu_credentials">
+        Для подключения к этой сети необходимо указать логин и пароль. Пожалуйста проверьте \"bmstu_lb (lbpfs.bmstu.ru)\" в меню \"Настройки подключения\".
+    </string>
+    <string name="auth_error_byfly_credentials">
+        Для подключения к этой сети необходимо указать логин и пароль. Пожалуйста проверьте \"ByFly (Белтелеком)\" в меню \"Настройки подключения\".
+    </string>
+    <string name="auth_error_form">форма не найдена</string>
+    <string name="auth_error_server">сервер не ответил или вернул ошибку</string>
+    <string name="auth_error_provider">провайдер не опознан</string>
+    <string name="auth_error_mosmetrov3_loop">ожидалось перенаправление на другой алгоритм, получено перенаправление на MosMetroV3 (бесконечный цикл)</string>
+    <string name="auth_error_fatal">неожиданное исключение в алгоритме</string>
+
+    <string name="notification_success">Успешно подключено</string>
+    <string name="notification_success_log">Нажмите, чтобы узнать подробности</string>
+    <string name="notification_not_registered">Устройство не зарегистрировано</string>
+    <string name="notification_not_registered_register">Нажмите, чтобы перейти к регистрации</string>
+    <string name="notification_error">Не удалось подключиться</string>
+    <string name="notification_error_log">Нажмите, чтобы узнать подробности или попробовать снова</string>
+    <string name="notification_unsupported">Сеть не поддерживается</string>
+    <string name="notification_progress_waiting">Ожидание…</string>
+
+    <string name="ip_wait">Ожидание получения IP адреса…</string>
+    <string name="ip_wait_result" formatted="false">IP адрес%s получен в течение %d секунд</string>
+
+    <string name="contributor_revertron_summary">Множество рекомендаций по алгоритмам</string>
+    <string name="contrinutor_Mikhail_Kuropatkin_summary">Помощь в сборе дампов авторизации</string>
+    <string name="contributor_Alexander_Krotov_summary">Первый Pull-реквест, миграция на Gradle, английский перевод</string>
+    <string name="contributor_Igor_Dyatlov_summary">Графическое оформление, логотип</string>
+
+    <string name="pref_category_internet">Проверка соединения</string>
+    <string name="pref_category_wifi">Управление Wi-Fi</string>
+    <string name="permission_request">Запросить разрешение</string>
+    <string name="open_settings">Открыть настройки</string>
+    <string name="dialog_battery_saving">Энергосбережение</string>
+    <string name="dialog_battery_saving_summary">Начиная с Android 6.0, вам необходимо внести это приложение в белый список энергосбережения, чтобы оно могло получать доступ к сети в фоновом режиме. В противном случае возможно зависание фонового процесса из-за новой политики энергосбережения.</string>
+
+    <string name="receiver_auto_connect">Автоподключение</string>
+    <string name="more_information">О приложении</string>
+    <string name="more_information_summary">Брендинг и благодарности open-source</string>
+    <string name="stop">Остановить</string>
+    <string name="pref_notify_foreground">Приоритетный процесс</string>
+    <string name="pref_notify_foreground_summary">Привязать фоновый процесс к уведомлению, чтобы предотвратить его уничтожение. Если вы выключите эту функцию, фоновый процесс будет убит, даже если вы просто откроете и закроете главное окно приложения.</string>
+    <string name="pref_timeout">Таймаут соединения</string>
+    <string name="pref_timeout_summary">Количество секунд, в течение которого приложение ожидает ответа от сервера. Если установлен 0, приложение будет ждать до тех пор пока не будет поймана одна из ошибок (по умолчанию: 5).</string>
+    <string name="toast_unsupported_function">Похоже эта функция не поддерживается вашим устройством :(</string>
+    <string name="toast_view_exception">Похоже, у вас не установлено ни одного приложения, подходящего для открытия этой ссылки.</string>
+    <string name="pref_notify_priority">Приоритет уведомлений</string>
+    <string name="pref_notify_priority_summary">Значение между -2 и 2, влияющее на приоритет всех уведомлений. (по умолчанию: 0)</string>
+    <string name="pref_notify_success">Успешное подключение</string>
+    <string name="pref_notify_success_summary">Уведомлять об успешном подключении</string>
+    <string name="error_log_file">не удалось записать лог в файл</string>
+    <string name="pref_internet_check_interval">Интервал проверок</string>
+    <string name="pref_internet_check_interval_summary">Количество секунд между проверками. Влияет на трафик и потребление энергии.</string>
+    <string name="pref_delay_range">Диапазон задержек (в миллисекундах)</string>
+    <string name="pref_delay_range_summary">Диапазон значений случайной задержки, добавляемой к каждому запросу.</string>
+    <string name="pref_user_agent">Заголовок User-Agent</string>
+    <string name="pref_user_agent_summary">Заголовок HTTP User-Agent используется для маскировки приложения под браузер. По умолчанию выбирается случайное значение.</string>
+    <string name="do_not_warn">Больше не предупреждать</string>
+    <string name="pref_share_warning">Будьте осторожны!</string>
+    <string name="pref_share_warning_summary">Лог подключения может содержать информацию, которую вы не хотели бы публиковать, например MAC-адрес устройства или номер телефона. Не отправляйте этот файл в чаты или социальные сети.</string>
+    <string name="pref_delay_enabled">Задержки между запросами</string>
+    <string name="pref_delay_enabled_summary">Замедлить процесс подключения, добавив задержки между HTTP-запросами, чтобы избежать возможных блокировок со стороны провайдера.</string>
+    <string name="pref_category_delays">Случайные задержки</string>
+    <string name="manual_connection_shortcut_summary">Запускайте ручное подключение прямо с рабочего стола</string>
+    <string name="pref_debug_logcat">Системный лог</string>
+    <string name="pref_debug_logcat_summary">Записывать сообщения в системный лог для отладки в случае аварийного завершения.</string>
+    <string name="pref_debug_acra">Отчёты о сбоях</string>
+    <string name="pref_debug_acra_summary">Автоматически отправлять отчёты о сбоях разработчику приложения.</string>
+    <string name="pref_updater_branch_stable">Основные ветки</string>
+    <string name="pref_updater_branch_experimental">Экспериментальные ветки</string>
+    <string name="pref_debug">Отладка</string>
+    <string name="pref_debug_summary">Автоматические отчёты, LogCat, и т.д.</string>
+    <string name="pref_mosmetro_v3_summary">Этот алгоритм использовался во время ЧМ 2018 по футболу в Москве и Санкт-Петербурге. В данный момент он отключён, так что, скорее всего, эта настройка ни на что не повлияет.</string>
+    <string name="pref_mosmetro_v2_wv">MosMetroV2WV (бета)</string>
+    <string name="pref_mosmetro_v2_wv_summary">Расширение алгоритма MosMetroV2, использующее браузер в фоновом режиме вместо заранее заданных HTTP запросов. Медленнее, но безопаснее, если провайдер снова начнёт принимать меры против пользователей данного приложения.</string>
+    <string name="pref_mosmetro_v2_wv_warning">Данный алгоритм работает менее стабильно, чем MosMetroV2. Он может зависать, вылетать или просто медленно подключаться. Вы действительно хотите его включить?</string>
+    <string name="pref_mainet_summary">Этот алгоритм используется для авторизации в сети MAInet_public Московского авиационного института.</string>
+    <string name="pref_bmstu_summary">Этот алгоритм используется для авторизации в сети bmstu_lb МГТУ им. Н. Э. Баумана</string>
+    <string name="pref_debug_last_log">Отправлять последний лог</string>
+    <string name="pref_debug_last_log_summary">Лог будет отправляться вместе с отчетами Sentry в случае сбоя.</string>
+    <string name="location_permission">Определение местоположения</string>
+    <string name="location_permission_saving">Чтобы приложение могло узнать название сети Wi-Fi, Android 9+ требует доступ к местоположению. Без этого разрешения приложение не сможет подключаться автоматически, но вы по-прежнему сможете использовать ручное подключение в главном меню или через ярлыки.</string>
+    <string name="log_wipe_confirmation">Очистить файл лога?</string>
+    <string name="auth_webview_page">Получение страницы авторизации</string>
+    <string name="auth_webview_page_wait">Ожидание загрузки страницы</string>
+    <string name="auth_webview_script">Ожидание завершения скрипта</string>
+    <string name="pref_internet_midsession">Обработка midsession</string>
+    <string name="pref_internet_midsession_summary">Если у вас появляется уведомление \"Требуется вход в сеть\" или Android считает, что доступа в интернет нет, когда он на самом деле есть, то эта опция может помочь.</string>
+    <string name="pref_debug_testing">Участие в тестировании</string>
+    <string name="pref_debug_testing_summary">Автоматически отправлять отчёты при определённых условиях. Условия меняются в каждом обновлении и направлены на проверку работы новых функций. Отчёт содержит последний лог, версию приложения и некоторую информацию о системе и устройстве.</string>
+    <string name="receiver_service_title">Ожидание подключения к сети Wi-Fi</string>
+    <string name="reveiver_service_summary">Нажмите сюда, чтобы открыть настройки</string>
+    <string name="pref_autoconnect_service_title">Постоянный фоновый процесс</string>
+    <string name="pref_autoconnect_service_summary">Включите эту опцию, если приложение не запускается самостоятельно при подключении устройства к Wi-Fi</string>
+    <string name="force_on">Всё-равно включить</string>
+    <string name="force_off">Всё-равно отключить</string>
+    <string name="coarse_location_permission">Чтобы приложение могло узнать название сети Wi-Fi, Android 9+ требует доступ к местоположению. Без этого разрешения приложение не сможет подключаться автоматически, даже если эта опция включена.</string>
+    <string name="background_location_permission">Чтобы приложение могло узнать название сети Wi-Fi, Android 9+ требует доступ к местоположению в фоне или постоянное уведомление. Если отключить эту опцию, не предоставив доступ к местоположению, то приложение не сможет подключаться автоматически.</string>
+    <string name="algorithms">Алгоритмы</string>
+    <string name="pref_manual_connection_monitoring">После ручного подключения</string>
+    <string name="pref_manual_connection_monitoring_summary">Продолжать проверять соединение с интернетом после успешного ручного подключения и до прерывания соединения с сетью Wi-Fi. Это необходимо для обработки midsession.</string>
+    <string name="pref_dnsjava">Альтернативный DNS клиент</string>
+    <string name="pref_dnsjava_summary">Всегда использовать собственный DNS клиент вместо системного</string>
+    <string name="update_error">Не удалось установить обновление. Попробуйте \"Скачать\" вместо \"Установить\"</string>
+    <string name="root_unavailable">Права root недоступны</string>
+    <string name="captive_fix_message">Для того, чтобы применить это исправление, необходимы либо права root, либо компьютер. Это нужно сделать только один раз.</string>
+    <string name="captive_fix_open_manual">Инструкция для ПК</string>
+    <string name="pref_captive_fix">Исправить системную проверку</string>
+    <string name="pref_captive_fix_summary">Android не хочет использовать некоторые сети Wi-Fi из-за некорректного поведения провайдера. Включите эту опцию, чтобы глобально изменить адрес проверки на более надёжный. [Требуется root или компьютер]</string>
+    <string name="pref_captive_notification">Обнаружен midsession! Нажмите &gt;сюда&lt;, если Android не хочет использовать эту сеть Wi-Fi.</string>
+    <string name="midsession_dialog">Чтобы заставить Android подключаться к Wi-Fi в обход midsession, выполните одно из следующих действий:\n\n1) Отключите мобильный интернет, пока используете Wi-Fi;\n\n2) Нажмите на уведомление \"Подключение к Wi-Fi\" и в верхней панели выберите опцию \"Использовать эту сеть\" (нужно выполнять при каждом подключении);\n\n3) Установите галочку \"Исправить системную проверку\" в настройках (требуется root или компьютер, но только один раз);\n\n4) Установите галочку \"Обработка midsession\" в настройках (может не сработать в зависимости от провайдера).</string>
+    <string name="logaction_mmv2wv_toggle">Слишком медленно? Нажмите &gt;сюда&lt;, чтобы отключить MosMetroV2WV и перейти на более быстрый алгоритм MosMetroV2</string>
+    <string name="done">Готово!</string>
+    <string name="auth_midsession_fail">Обработка midsession не сработала. Если это сообщение появляется слишком часто, нажмите &gt;сюда&lt;, чтобы отключить эту функцию.</string>
+    <string name="auth_midsession_start">Пытаюсь обойти midsession</string>
+    <string name="vpn_warning">Обнаружен VPN! Некоторые VPN или фильтры трафика могут мешать работе приложения, даже если оно находится в списке исключений. Пожалуйста, попробуйте отключить VPN и снова запустить подключение.</string>
+    <string name="pref_wifi_any_ssid">Проверять все сети</string>
+    <string name="pref_wifi_any_ssid_summary">Искать признаки поддерживаемых алгоритмов с помощью быстрой проверки через DNS в сетях Wi-Fi с незнакомым названием.</string>
+    <string name="send">Отправить</string>
+    <string name="feedback_title">Обратная связь</string>
+    <string name="feedback_description">Описание проблемы (не обязательно)</string>
+    <string name="share">Поделиться</string>
+    <string name="pref_debug_stats">Участие в статистике</string>
+    <string name="pref_debug_stats_summary">Приложение будет собирать анонимную статистику о подключениях. Кроме внутренних метрик (версия, алгоритм и т.д.), в отчёты включаются название сети Wi-Fi и версия Android.</string>
+    <string name="pref_byfly_summary">Этот алгоритм используется для подключения к \"BELTELECOM\" и \"byfly WIFI\" — платным сетям Wi-Fi в Беларуси.</string>
+    <string name="pref_byfly">ByFly (Белтелеком)</string>
+</resources>

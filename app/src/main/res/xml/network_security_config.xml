@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Captive portals часто отдают HTTP cleartext / свои CA -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">wi-fi.ru</domain>
+        <domain includeSubdomains="true">auth.wi-fi.ru</domain>
+        <domain includeSubdomains="true">welcome.wi-fi.ru</domain>
+        <domain includeSubdomains="true">gowifi.ru</domain>
+        <domain includeSubdomains="true">login.wi-fi.ru</domain>
+        <domain includeSubdomains="true">mos.ru</domain>
+        <domain includeSubdomains="true">www.google.ru</domain>
+        <domain includeSubdomains="true">play.googleapis.com</domain>
+        <domain includeSubdomains="true">connectivitycheck.gstatic.com</domain>
+        <domain includeSubdomains="true">connectivitycheck.android.com</domain>
+        <domain includeSubdomains="true">www.gstatic.com</domain>
+        <domain includeSubdomains="true">clients1.google.com</domain>
+        <domain includeSubdomains="true">google.com</domain>
+        <domain includeSubdomains="true">gstatic.com</domain>
+        <domain includeSubdomains="true">maps.google.com</domain>
+        <domain includeSubdomains="true">mt0.google.com</domain>
+        <domain includeSubdomains="true">mt1.google.com</domain>
+        <domain includeSubdomains="true">mt2.google.com</domain>
+        <domain includeSubdomains="true">mt3.google.com</domain>
+        <domain includeSubdomains="true">www.google.com</domain>
+    </domain-config>
+</network-security-config>

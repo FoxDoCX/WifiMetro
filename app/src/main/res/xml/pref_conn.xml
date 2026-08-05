@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/algorithms" />
+
+    <CheckBoxPreference
+        android:key="pref_mosmetro_v2_wv"
+        android:title="@string/pref_mosmetro_v2_wv"
+        android:summary="@string/pref_mosmetro_v2_wv_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="pref_mosmetro_v3"
+        android:title="@string/pref_mosmetro_v3"
+        android:summary="@string/pref_mosmetro_v3_summary"
+        android:defaultValue="true" />
+
+    <pw.thedrhax.mosmetro.preferences.LoginFormPreference
+        android:key="pref_mainet_credentials"
+        android:title="@string/pref_mainet"
+        android:summary="@string/pref_mainet_summary" />
+
+    <pw.thedrhax.mosmetro.preferences.LoginFormPreference
+        android:key="pref_bmstu_credentials"
+        android:title="@string/pref_bmstu"
+        android:summary="@string/pref_bmstu_summary" />
+
+    <pw.thedrhax.mosmetro.preferences.LoginFormPreference
+        android:key="pref_byfly_credentials"
+        android:title="@string/pref_byfly"
+        android:summary="@string/pref_byfly_summary" />
+
+    <PreferenceCategory android:title="@string/pref_category_wifi" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_wifi_any_ssid"
+        android:title="@string/pref_wifi_any_ssid"
+        android:summary="@string/pref_wifi_any_ssid_summary" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_wifi_reconnect"
+        android:summary="@string/pref_wifi_reconnect_summary"
+        android:title="@string/pref_wifi_reconnect" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_wifi_bind"
+        android:summary="@string/pref_wifi_bind_summary"
+        android:title="@string/pref_wifi_bind" />
+
+    <PreferenceCategory android:title="@string/pref_category_internet" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_internet_check"
+        android:summary="@string/pref_internet_check_summary"
+        android:title="@string/pref_internet_check" />
+
+    <EditTextPreference
+        android:defaultValue="10"
+        android:inputType="number"
+        android:key="pref_internet_check_interval"
+        android:title="@string/pref_internet_check_interval"
+        android:summary="@string/pref_internet_check_interval_summary" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_manual_connection_monitoring"
+        android:title="@string/pref_manual_connection_monitoring"
+        android:summary="@string/pref_manual_connection_monitoring_summary" />
+
+    <PreferenceCategory android:key="pref_captive" android:title="@string/captive" />
+
+    <CheckBoxPreference
+        android:key="pref_captive_fix"
+        android:title="@string/pref_captive_fix"
+        android:summary="@string/pref_captive_fix_summary"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_internet_midsession"
+        android:summary="@string/pref_internet_midsession_summary"
+        android:title="@string/pref_internet_midsession" />
+
+    <PreferenceCategory android:title="@string/pref_category_connection" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_dnsjava"
+        android:title="@string/pref_dnsjava"
+        android:summary="@string/pref_dnsjava_summary" />
+
+    <EditTextPreference
+        android:defaultValue="3"
+        android:inputType="number"
+        android:key="pref_retry_count"
+        android:summary="@string/pref_retry_count_summary"
+        android:title="@string/pref_retry_count" />
+
+    <EditTextPreference
+        android:defaultValue="5"
+        android:inputType="number"
+        android:key="pref_retry_delay"
+        android:summary="@string/pref_retry_delay_summary"
+        android:title="@string/pref_retry_delay" />
+
+    <EditTextPreference
+        android:defaultValue="0"
+        android:inputType="number"
+        android:key="pref_ip_wait"
+        android:summary="@string/pref_ip_wait_summary"
+        android:title="@string/pref_ip_wait" />
+
+    <EditTextPreference
+        android:defaultValue="5"
+        android:inputType="number"
+        android:key="pref_timeout"
+        android:summary="@string/pref_timeout_summary"
+        android:title="@string/pref_timeout" />
+
+    <EditTextPreference
+        android:defaultValue="unset"
+        android:key="pref_user_agent"
+        android:title="@string/pref_user_agent"
+        android:summary="@string/pref_user_agent_summary" />
+
+    <PreferenceCategory android:title="@string/pref_category_delays" />
+
+    <CheckBoxPreference
+        android:key="pref_delay_enabled"
+        android:title="@string/pref_delay_enabled"
+        android:summary="@string/pref_delay_enabled_summary"
+        android:defaultValue="false" />
+
+    <pw.thedrhax.mosmetro.preferences.RangeBarPreference
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:key="pref_delay_range"
+        android:title="@string/pref_delay_range"
+        android:summary="@string/pref_delay_range_summary"
+        custom:defaultMin="500"
+        custom:defaultMax="1000"
+        custom:min="0"
+        custom:max="5000"
+        custom:step="100" />
+
+</PreferenceScreen>

@@ -1,0 +1,308 @@
+================================================================================
+WifiMetro — полный список изменений относительно исходников
+================================================================================
+
+База сравнения (исходники):
+  Git remote : https://github.com/XeonDead/mosmetro-android.git
+  Commit HEAD: c55a824 ("app: DnsClient: более не рапортуем, что WiFi выключен")
+  Upstream   : mosmetro-android/mosmetro-android (GPL-3.0)
+  Fork base  : XeonDead/mosmetro-android (Android-обновления + ByFly)
+
+Текущая сборка:
+  Название     : WifiMetro
+  versionName  : 2.8.3
+  versionCode  : 87 (ABI-сплиты: v7a → 871, arm64 → 872)
+  Автор сборки : FoxDoC
+  Дата отчёта  : 2026-08-04
+  Лицензия     : GPL-3.0 (без изменений)
+
+Артефакты:
+  dist/WifiMetro-2.8.3-FoxDoC-android16-arm64-v8a-debug.apk
+  dist/WifiMetro-2.8.3-FoxDoC-android16-armeabi-v7a-debug.apk
+
+================================================================================
+1. ВЕРСИЯ И ЦЕЛЕВАЯ ПЛАТФОРМА
+================================================================================
+
+Параметр          | Было (XeonDead HEAD) | Стало (WifiMetro 2.8.1)
+------------------|----------------------|------------------------
+app_name          | Moscow Wi-Fi autologin | WifiMetro
+versionName       | 2.3.2                | 2.8.1
+versionCode       | 77                   | 85 (+ ABI override *10+1/2)
+compileSdk        | 35                   | 36 (Android 16)
+targetSdk         | 30                   | 36
+minSdk            | 26                   | 26
+BRANCH_NAME       | play (default)       | FoxDoC (default)
+BUILD_AUTHOR      | —                    | FoxDoC
+ABI               | не зафиксированы     | armeabi-v7a + arm64-v8a (отдельные APK)
+
+Сборка:
+  - Gradle Wrapper 8.13, Android Gradle Plugin 8.13
+  - Добавлен/настроен ABI-split в app/build.gradle
+  - Debug APK копируются в dist/
+
+================================================================================
+2. КРИТИЧЕСКИЕ БАГФИКСЫ (относительно fork XeonDead)
+================================================================================
+
+2.1. Notify.java
+  Было: в show() создавался пустой NotificationCompat.Builder — пустые
+        foreground/уведомления, нестабильный FGS.
+  Стало: корректный Builder с CHANNEL_ID, канал уведомлений,
+         ServiceCompat.startForeground(..., FOREGROUND_SERVICE_TYPE_DATA_SYNC).
+
+2.2. DnsClient.java
+  Было: InetSocketAddress.toString() → строки вида "/1.1.1.1:53", DNS ломался.
+  Стало: используется getHostAddress() / корректный host:port.
+
+2.3. WifiUtils.isEnabled()
+  Было: вместо «радио Wi‑Fi включено» проверялся SupplicantState
+        (association) → ложные «Wi‑Fi выключен».
+  Стало: WifiManager.isWifiEnabled(); отдельно добавлен isAssociated().
+
+2.4. BackendWorker.java
+  Было: new Constraints(NetworkType.UNMETERED, ...) — хрупко/ломается
+        на новых WorkManager.
+  Стало: Constraints.Builder; ошибки старта не валят приложение.
+
+2.5. Краш при открытии на Android 15/16
+  Было: Theme.Holo.*, registerReceiver без флагов, жёсткий init в Application.
+  Стало:
+    - темы DeviceDefault (+ values-v35);
+    - Util.registerReceiver(..., EXPORTED / NOT_EXPORTED);
+    - MosMetroApp: try/catch вокруг Logger / WorkManager / Sentry.
+
+================================================================================
+3. ANDROID 12–16 СОВМЕСТИМОСТЬ
+================================================================================
+
+Манифест / runtime:
+  - android:exported для Activity/Receiver с intent-filter
+  - POST_NOTIFICATIONS + запрос при старте Settings (API 33+)
+  - FOREGROUND_SERVICE + FOREGROUND_SERVICE_DATA_SYNC
+  - foregroundServiceType="dataSync" (ConnectionService, ReceiverService)
+  - Util.startService → ContextCompat.startForegroundService
+  - PendingIntent всегда FLAG_IMMUTABLE (Util.pendingFlags)
+  - ACCESS_FINE_LOCATION (SSID на новых Android, иначе <unknown ssid>)
+  - ACCESS_BACKGROUND_LOCATION в манифесте
+  - WRITE_EXTERNAL_STORAGE ограничен maxSdkVersion=28
+  - Ранний startForeground в ConnectionService.onStartCommand
+
+Сеть / cleartext (captive portals):
+  - network_security_config.xml: HTTP разрешён для wi-fi.ru,
+    welcome.wi-fi.ru, auth.wi-fi.ru, gowifi.ru, mos.ru и связанных доменов
+  - usesCleartextTraffic=true (для порталов авторизации)
+
+Edge-to-edge / insets (Android 15+ / targetSdk 36):
+  - SystemBarUtils: setDecorFitsSystemWindows(false) + ручные insets
+  - ActionBar (action_bar_container): topMargin = statusBar/cutout
+  - content паддится только если реально уезжает под ActionBar
+  - фон content = bgSecondary (без «зелёного окна» на весь экран)
+  - re-apply после onResume / replaceFragment / back stack
+  - Settings / Debug / Feedback; values-v35 opt-out edge-to-edge
+
+Меню ручного выбора сетей (2.8.1):
+  - NetworksFragment: список SSID из Provider.SSIDs (транспорт / город /
+    МТС / прочее) + «текущая сеть» / force login
+  - Preference «Сети Wi‑Fi» / «Wi‑Fi networks» → ручной вход + DebugActivity
+  - ConnectionService.EXTRA_SSID для лога / fallback display SSID
+
+================================================================================
+4. СЕТИ / SSID (сравнение с исходниками)
+================================================================================
+
+Было в исходниках (Provider.SSIDs):
+  MosMetro_Free, AURA, MosGorTrans_Free,
+  MT_FREE, MT_FREE_,
+  CPPK_Free, Air_WiFi_Free,
+  Moscow_WiFi_Free, Moscow_WIFI_Free,
+  MAInet_public, bmstu_lb,
+  BELTELECOM, BELTELECOM WIFI, byfly WIFI
+
+Добавлено в WifiMetro:
+  Транспорт / алиасы:
+    MT Free, MT-FREE
+    Aeroexpress_Free, Aeroexpress_WiFi
+  Городской Wi‑Fi Москвы:
+    Moscow_Wi-Fi_Free, Moscow_Wifi_Free, Moscow Wifi Free
+    Wi-Fi_Free, WIFI_FREE, WiFi_Free
+  МТС городской Wi‑Fi:
+    MTS_WiFi_Free, MTS_WIFI_Free, MTS WiFi Free, MTS-WiFi-Free
+
+Прочее:
+  - isSSIDSupported(): сравнение case-insensitive (equalsIgnoreCase)
+
+Важно:
+  SSID добавлены по аналогии с текущей логикой (триггер автозапуска).
+  Автологин через существующие MosMetroV1/V2/V2WV/V3 работает там,
+  где captive portal тот же (auth.wi-fi.ru / welcome.wi-fi.ru).
+  Отдельный silent-login для МТС ID / Mos ID / SMS без дампа портала
+  НЕ реализован.
+
+================================================================================
+5. БРЕНДИНГ И UI/UX
+================================================================================
+
+Брендинг:
+  Было: "Moscow Wi-Fi autologin", developer = Dmitry Karikh
+  Стало:
+    - app_name = WifiMetro
+    - app_signature = "WifiMetro · FoxDoC build"
+    - developer_info = "WifiMetro by FoxDoC — based on open-source MosMetro (GPL-3.0)"
+    - В About: пункт "Build author / Автор сборки" → FoxDoC
+    - Version.getFormattedVersion() включает FoxDoC
+
+Визуал (бело-зелёная тема):
+  - colors.xml: палитра (#1B8A4A и связанные)
+  - themes.xml / values-v11 / v14 / v21 / v35: зелёный ActionBar,
+    DeviceDefault, кнопки WifiMetroButton
+  - Новые drawable: bg_button_primary, bg_button_secondary, bg_card, bg_input
+  - Обновлены иконки: ic_launcher, notification_*, widget_toggle_*
+  - Layouts: debug_activity, feedback_activity, shortcut_activity
+  - preferences.xml: структура меню без блока обновлений в UI
+
+Обновления приложения:
+  - UI проверки обновлений убран/отключён
+  - Автопроверка обновлений при старте отключена
+  - Фоновая проверка обновлений отключена в BackendRequest / SettingsActivity
+  - Новостные / donate-уведомления по умолчанию выкл.
+
+================================================================================
+6. ПОЛНОЕ УДАЛЕНИЕ ДОНАТА (2.8.0)
+================================================================================
+
+Удалено относительно исходников:
+  - Кнопка DONATE в ActionBar (menu/settings_activity.xml удалён)
+  - donate_dialog() и ACTION_DONATE в SettingsActivity
+  - Уведомления-напоминания о донате (ProviderMetrics)
+  - Preference pref_notify_donate (pref_notify.xml)
+  - Строки action_donate*, donate_options, donate_*_data,
+    notification_donate_*, remind_less_frequently (по сути)
+  - SilentActionActivity: логика disable/toggle donate reminder очищена
+    (Activity оставлена как stub для совместимости intent)
+
+================================================================================
+7. НОВЫЕ ФАЙЛЫ (не было в исходниках)
+================================================================================
+
+  app/src/main/java/pw/thedrhax/util/SystemBarUtils.java
+  app/src/main/res/drawable/bg_button_primary.xml
+  app/src/main/res/drawable/bg_button_secondary.xml
+  app/src/main/res/drawable/bg_card.xml
+  app/src/main/res/drawable/bg_input.xml
+  app/src/main/res/values-v35/themes.xml
+  CHANGES.md
+  CHANGES.txt          (этот файл)
+  dist/*               (APK, скриншоты тестов, краткие changelog)
+
+================================================================================
+8. ИЗМЕНЁННЫЕ ФАЙЛЫ (git diff vs HEAD исходников)
+================================================================================
+
+Сборка / манифест:
+  app/build.gradle
+  app/src/main/AndroidManifest.xml
+  app/src/main/res/xml/network_security_config.xml
+
+Java (логика):
+  MosMetroApp.java
+  activities/SettingsActivity.java
+  activities/DebugActivity.java
+  activities/FeedbackActivity.java
+  activities/ConnectionServiceActivity.java
+  activities/SilentActionActivity.java
+  authenticator/Provider.java
+  authenticator/ProviderMetrics.java
+  httpclient/DnsClient.java
+  services/BackendWorker.java
+  services/BootReceiver.java
+  services/ConnectionService.java
+  services/NetworkReceiver.java
+  services/ReceiverService.java
+  updater/BackendRequest.java
+  updater/UpdateChecker.java
+  widgets/ToggleWidget.java
+  util/Notify.java
+  util/PermissionUtils.java
+  util/Util.java
+  util/Version.java
+  util/WifiUtils.java
+  util/SystemBarUtils.java          (новый)
+
+Ресурсы:
+  values/colors.xml, strings.xml, themes.xml
+  values-ru/strings.xml
+  values-v11/themes.xml, values-v14/themes.xml, values-v21/themes.xml
+  values-v35/themes.xml             (новый)
+  xml/about.xml, preferences.xml, pref_notify.xml
+  layout/debug_activity.xml, feedback_activity.xml, shortcut_activity.xml
+  drawable/ic_launcher.xml, ic_notification_*, ic_widget_toggle_*
+  drawable/bg_*                     (новые)
+  menu/settings_activity.xml        (удалён)
+
+================================================================================
+9. ИСТОРИЯ СБОРОК WifiMetro (локальные артефакты)
+================================================================================
+
+  2.5.0  — Android 15 (API 35), первые ABI-сплиты
+  2.6.0  — target/compileSdk 36 (Android 16)
+  2.6.1  — стабилизация краша при открытии (темы/receivers)
+  2.7.0  — UI/UX бело-зелёная тема, брендинг WifiMetro, отключение updates UI
+  2.7.1  — фикс наезда ActionBar на меню (insets / edge-to-edge)
+  2.8.0  — удаление доната, расширение SSID, подпись автора FoxDoC
+  2.8.1  — надёжный insets-фикс + отдельное меню «Сети Wi‑Fi»
+           + очередь restart при повторном ручном старте
+           + тёмный nav bar / contrast на API 29+
+  2.8.2  — тёмная тема + кнопка переключения в ActionBar (справа)
+  2.8.3  — нижние insets: кнопки/контент выше 3-button и gesture nav
+
+================================================================================
+10. ТЕСТИРОВАНИЕ
+================================================================================
+
+  2.7.1 arm64: install OK, launch OK, crash нет, DONATE есть
+  2.8.0 FoxDoC arm64: install OK, launch OK, crash нет, DONATE нет,
+                      About → FoxDoC OK, DebugActivity OK
+  2.8.0 FoxDoC v7a: install OK, launch OK, crash нет, DONATE нет
+  2.8.1 API 36 (Pixel_API36): overlap=False gap≈63; меню сетей OK;
+                              MT_FREE → Debug (Stop)
+  2.8.1 API 37 (Pixel_7):     overlap=False gap≈63; networks header OK;
+                              MT_FREE → Debug (Stop)
+  2.8.1 recheck API30/36/37:
+        MAIN/NETWORKS overlap=False на всех;
+        Manual / Connect current / MT_FREE / Moscow / MTS / BELTELECOM /
+        Aeroexpress → Debug OK; выбранный SSID виден в логе (uiHasSsid=True)
+
+  2.8.3 API30/36: Debug «Try again/Stop» выше 3-button и gesture nav
+        (gap≈116–187, clear=True); MAIN overlap=False
+
+Скриншоты: dist/test-results/283-*.png
+
+================================================================================
+11. ЧЕГО НЕТ (осознанно)
+================================================================================
+
+  - Полноценный silent-login для МТС ID / Mos ID / SMS-порталов
+  - Release-подпись своим keystore (сейчас debug APK)
+  - Изменение package id (остаётся pw.thedrhax.mosmetro)
+  - Переписывание архитектуры авторизации / провайдеров
+
+================================================================================
+12. КАК СТАВИТЬ
+================================================================================
+
+  1. Удалить предыдущую debug-сборку с тем же package id.
+  2. Установить:
+       dist/WifiMetro-2.8.1-FoxDoC-android16-arm64-v8a-debug.apk
+     (на большинстве телефонов; для старых CPU — armeabi-v7a).
+  3. Выдать: геолокация (SSID), уведомления; при необходимости —
+     игнор оптимизации батареи.
+  4. Включить автоподключение; на MIUI — «постоянный фоновый процесс».
+
+Лицензия проекта по-прежнему GPL-3.0.
+Исходный автор upstream: Dmitry Karikh / mosmetro-android.
+Автор данной сборки: FoxDoC.
+
+================================================================================
+Конец отчёта
+================================================================================

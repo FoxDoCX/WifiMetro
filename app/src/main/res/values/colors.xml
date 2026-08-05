@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- White + green palette -->
+    <color name="colorPrimary">#1B8A4A</color>
+    <color name="colorPrimaryDark">#146B39</color>
+    <color name="colorPrimaryLight">#2EBF6A</color>
+    <color name="colorAccent">#22C55E</color>
+    <color name="colorAccentSoft">#DCFCE7</color>
+
+    <color name="bgPrimary">#FFFFFF</color>
+    <color name="bgSecondary">#F3FBF6</color>
+    <color name="bgSurface">#FFFFFF</color>
+    <color name="bgCard">#EAF9F0</color>
+
+    <color name="textPrimary">#1A2E24</color>
+    <color name="textSecondary">#4B6355</color>
+    <color name="textOnPrimary">#FFFFFF</color>
+    <color name="divider">#CDEBD9</color>
+
+    <color name="buttonPrimary">#1B8A4A</color>
+    <color name="buttonPrimaryPressed">#146B39</color>
+    <color name="buttonSecondary">#E8F8EE</color>
+
+    <!-- Dark theme -->
+    <color name="colorPrimaryDarkTheme">#22A85A</color>
+    <color name="colorPrimaryDarkDarkTheme">#0B1A12</color>
+    <color name="colorAccentDarkTheme">#34D399</color>
+    <color name="bgPrimaryDarkTheme">#121212</color>
+    <color name="bgSecondaryDarkTheme">#161C18</color>
+    <color name="bgSurfaceDarkTheme">#1E2621</color>
+    <color name="textPrimaryDarkTheme">#E8F0EB</color>
+    <color name="textSecondaryDarkTheme">#A8B5AD</color>
+    <color name="dividerDarkTheme">#2A332E</color>
+</resources>

@@ -1,0 +1,135 @@
+plugins {
+    id 'com.android.application'
+    id 'androidsvgdrawable'
+}
+
+android {
+    namespace 'pw.thedrhax.mosmetro'
+    // Android 16 (API 36)
+    compileSdkVersion 36
+
+    defaultConfig {
+        applicationId 'pw.thedrhax.mosmetro'
+        minSdkVersion 26
+        targetSdkVersion 36
+        versionCode 87
+        versionName "2.8.3"
+
+        // Build author / branch signature
+        def branch_name = System.getenv("BRANCH_NAME") ?: "FoxDoC"
+        buildConfigField "String", "BRANCH_NAME", "\"$branch_name\""
+        buildConfigField "Integer", "BUILD_NUMBER", System.getenv("BUILD_NUMBER") ?: "1"
+        buildConfigField "String", "BUILD_AUTHOR", "\"FoxDoC\""
+        resValue "string", "build_branch_name", "$branch_name"
+        resValue "string", "build_author", "FoxDoC"
+
+        buildConfigField "String", "API_URL_DATA", "\"https://raw.githubusercontent.com/mosmetro-android/builds/data/data.json\""
+        buildConfigField "String", "API_URL_STATS", "\"https://mosmetro.duckdns.org/api/v3/stats\""
+
+        // Required when setting minSdkVersion to 20 or lower
+        multiDexEnabled true
+    }
+
+    // Separate APKs: armeabi-v7a (v7) and arm64-v8a (v8)
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a'
+            universalApk false
+        }
+    }
+
+    compileOptions {
+        // Flag to enable support for the new language APIs, needs multiDex
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_1_10
+        targetCompatibility JavaVersion.VERSION_1_10
+    }
+
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+    if (keystorePropertiesFile.exists()) {
+        def keystoreProperties = new Properties()
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+        signingConfigs {
+            release {
+                storeFile new File(keystoreProperties['RELEASE_STORE_FILE'])
+                storePassword keystoreProperties['RELEASE_STORE_PASSWORD']
+                keyAlias keystoreProperties['RELEASE_KEY_ALIAS']
+                keyPassword keystoreProperties['RELEASE_KEY_PASSWORD']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs = ['src/main/res', 'build/generated/res/main']
+            jniLibs.srcDirs = ['libs']
+            java {
+                srcDir 'src'
+            }
+        }
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging false
+        }
+    }
+
+    lint {
+        abortOnError false
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+// Unique versionCode per ABI: v7 -> +1, v8 -> +2
+ext.abiCodes = ['armeabi-v7a': 1, 'arm64-v8a': 2]
+android.applicationVariants.all { variant ->
+    variant.outputs.each { output ->
+        def abi = output.getFilter(com.android.build.OutputFile.ABI)
+        if (abi != null && project.ext.abiCodes.containsKey(abi)) {
+            output.versionCodeOverride = variant.versionCode * 10 + project.ext.abiCodes.get(abi)
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation 'androidx.work:work-runtime:2.10.4'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
+    implementation 'org.jsoup:jsoup:1.21.2'
+    implementation ('com.googlecode.json-simple:json-simple:1.1.1') {
+        exclude module: 'junit'
+    }
+    implementation 'com.edmodo:rangebar:1.0.0'
+    implementation 'dnsjava:dnsjava:3.6.3'
+    implementation 'com.jayway.jsonpath:json-path:2.9.0'
+    implementation 'com.github.topjohnwu.libsu:core:3.1.2'
+    implementation 'io.sentry:sentry-android-core:8.21.1'
+    implementation 'net.minidev:json-smart:2.5.1'
+
+    // https://developer.android.com/studio/write/java8-support#library-desugaring-versions
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+}

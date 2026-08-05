@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_category_quick">
+        <CheckBoxPreference
+            android:key="pref_autoconnect"
+            android:title="@string/pref_autoconnect"
+            android:summary="@string/pref_autoconnect_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="pref_autoconnect_service"
+            android:title="@string/pref_autoconnect_service_title"
+            android:summary="@string/pref_autoconnect_service_summary"
+            android:defaultValue="false" />
+
+        <Preference
+            android:title="@string/manual_connection"
+            android:summary="@string/manual_connection_summary">
+            <intent android:action="pw.thedrhax.mosmetro.activities.DebugActivity" />
+        </Preference>
+
+        <Preference
+            android:key="pref_networks"
+            android:title="@string/pref_networks"
+            android:summary="@string/pref_networks_summary" />
+
+        <Preference
+            android:title="@string/view_log"
+            android:summary="@string/view_log_summary">
+            <intent android:action="pw.thedrhax.mosmetro.activities.DebugActivity">
+                <extra android:name="view_only" android:value="true" />
+            </intent>
+        </Preference>
+
+        <Preference
+            android:key="pref_shortcut"
+            android:title="@string/manual_connection_shortcut"
+            android:summary="@string/manual_connection_shortcut_summary">
+            <intent android:action="pw.thedrhax.mosmetro.activities.ShortcutActivity" />
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="pref_category_main"
+        android:title="@string/pref_category_main">
+
+        <Preference
+            android:key="pref_conn"
+            android:title="@string/pref_category_connection"
+            android:summary="@string/pref_category_connection_summary" />
+
+        <Preference
+            android:key="pref_notify"
+            android:title="@string/pref_category_notifications"
+            android:summary="@string/pref_category_notifications_summary" />
+
+        <Preference
+            android:key="pref_debug"
+            android:title="@string/pref_debug"
+            android:summary="@string/pref_debug_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about">
+        <Preference
+            android:key="app_name"
+            android:icon="@drawable/ic_launcher"
+            android:title="@string/app_name"
+            android:summary="@string/app_tagline" />
+
+        <Preference
+            android:key="pref_about"
+            android:title="@string/more_information"
+            android:summary="@string/more_information_summary" />
+    </PreferenceCategory>
+</PreferenceScreen>

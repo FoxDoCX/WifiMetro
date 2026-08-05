@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bgSecondary"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/feedback_title"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:paddingBottom="8dp" />
+
+    <EditText
+        android:id="@+id/text_message"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="@string/feedback_description"
+        android:inputType="textMultiLine"
+        android:background="@drawable/bg_input"
+        android:padding="12dp"
+        android:textColor="@color/textPrimary"
+        android:textColorHint="@color/textSecondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:layout_marginRight="6dp"
+            android:onClick="buttonCancel"
+            android:text="@string/cancel"
+            android:background="@drawable/bg_button_secondary"
+            android:textColor="@color/colorPrimaryDark"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:layout_marginLeft="6dp"
+            android:onClick="buttonSend"
+            android:text="@string/send"
+            android:background="@drawable/bg_button_primary"
+            android:textColor="@color/textOnPrimary"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</LinearLayout>

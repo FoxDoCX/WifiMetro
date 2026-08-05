@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WifiMetro</string>
+    <string name="theme_switch_dark">Dark theme</string>
+    <string name="theme_switch_light">Light theme</string>
+    <string name="app_tagline">Automatic Wi-Fi login for Moscow</string>
+    <string name="app_signature">WifiMetro · FoxDoC build</string>
+    <string name="build_author_label">Build author</string>
+    <string name="build_author_info">FoxDoC</string>
+
+    <string name="report">Send report</string>
+    <string name="report_email_address" translatable="false">mosmetro@thedrhax.pw</string>
+    <string name="report_email_subject" formatted="false">Version %s</string>
+    <string name="report_choose_client">Choose email client or messenger…</string>
+
+    <string name="retry">Try again</string>
+    <string name="connect">Connect</string>
+    <string name="in_background">In background</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="install">Install</string>
+    <string name="download">Download</string>
+
+    <string name="ignore_short">Ignore</string>
+    <string name="ignore">Ignore</string>
+    <string name="later">Later</string>
+    <string name="error" formatted="false">Error: %s</string>
+    <string name="not">not</string>
+    <string name="try_out_of" formatted="false">try %d out of %d</string>
+    <string name="version" formatted="false">Version: %s</string>
+    <string name="show_debug_log">Show verbose messages</string>
+    <string name="clipboard_copy">Text copied to clipboard</string>
+    <string name="screen_clear">Clear screen</string>
+    <string name="warning">Warning</string>
+    <string name="about">About</string>
+    <string name="log">Log</string>
+
+    <string name="form_login">Login:</string>
+    <string name="form_password">Password:</string>
+
+    <string name="pref_category_main">Settings</string>
+    <string name="pref_category_quick">Quick actions</string>
+    <string name="pref_category_connection">Connection</string>
+    <string name="pref_category_connection_summary">Background login options</string>
+    <string name="pref_category_notifications">Notifications</string>
+    <string name="pref_category_notifications_summary">Choose which alerts to show</string>
+    <string name="pref_category_updater">Updates</string>
+    <string name="pref_category_contributors">Credits</string>
+
+    <string name="pref_autoconnect">Automatic authentication</string>
+    <string name="pref_autoconnect_summary">Login automatically when connected to supported Wi-Fi networks</string>
+
+    <string name="pref_wifi_reconnect">Reconnect to Wi-Fi</string>
+    <string name="pref_wifi_reconnect_summary">
+        Try to reconnect to Wi-Fi network automatically when Wi-Fi signal is lost or connection is reset. (Android &lt; 10)
+    </string>
+    <string name="pref_wifi_bind">Bind process to the network</string>
+    <string name="pref_wifi_bind_summary">Prevents leaking traffic to mobile network or VPN. (Android ≥ 5)</string>
+
+    <string name="pref_internet_check">Connection monitoring</string>
+    <string name="pref_internet_check_summary">Check Internet connection every 10 seconds and restart connection on error.</string>
+
+    <string name="pref_notify_fail">Connection failure</string>
+    <string name="pref_notify_fail_summary">Notify on failure</string>
+    <string name="pref_notify_alternative">Alternative icons</string>
+    <string name="pref_notify_alternative_summary">
+        Use white icons on Android older than 5.0 and colored icons on Android 5.0 and newer (not always supported).
+    </string>
+    <string name="pref_notify_success_lock">Locked notification</string>
+    <string name="pref_notify_success_lock_summary">
+        Lock successful connection notification (notification will remain while Wi-Fi is connected)
+    </string>
+    <string name="pref_notify_news">Developer news</string>
+    <string name="pref_notify_news_summary">I will be able to inform you in case of problems with application.</string>
+
+    <string name="pref_retry_delay">Delay between retries</string>
+    <string name="pref_retry_delay_summary">Number of seconds between retries (default: 5)</string>
+    <string name="pref_retry_count">Retry count</string>
+    <string name="pref_retry_count_summary">Number of retries on error (default: 3)</string>
+
+    <string name="pref_ip_wait">Waiting for IP address</string>
+    <string name="pref_ip_wait_summary">
+        Number of seconds to wait for IP address assignment.
+        If 0 is set, application will wait until device disconnects from the network (default: 0).
+    </string>
+
+    <string name="pref_updater_enabled">Check automatically</string>
+    <string name="pref_updater_enabled_summary">Check for updates on application start</string>
+    <string name="pref_updater_check">Check for updates</string>
+    <string name="pref_updater_check_summary">Check for new application version on developer website</string>
+    <string name="pref_updater_branch">Update branch</string>
+    <string name="pref_updater_branch_summary">
+        Branches differ by functionality and update frequency. Tap here to see more or select a branch.
+    </string>
+
+    <string name="update_available">Update is available</string>
+    <string name="update_not_available">No updates available</string>
+    <string name="update_not_available_message">New versions will be displayed here when published.</string>
+
+    <string name="developer">Project info</string>
+    <string name="developer_info">WifiMetro by FoxDoC — based on open-source MosMetro (GPL-3.0)</string>
+    <string name="developer_github_repo">GitHub organization</string>
+    <string name="developer_github_repo_summary" translatable="false">github.com/mosmetro-android</string>
+    <string name="developer_github_repo_link" translatable="false">https://github.com/mosmetro-android</string>
+    <string name="developer_vkontakte">VK community</string>
+    <string name="developer_vkontakte_summary" translatable="false">vk.com/wifi_v_metro</string>
+    <string name="developer_vkontakte_link" translatable="false">https://vk.com/wifi_v_metro</string>
+    <string name="developer_telegram_channel">Telegram channel</string>
+    <string name="developer_telegram_channel_summary" translatable="false">t.me/wifi_v_metro</string>
+    <string name="developer_telegram_channel_link" translatable="false">https://t.me/wifi_v_metro</string>
+    <string name="developer_telegram">Telegram group</string>
+    <string name="developer_telegram_group_summary" translatable="false">t.me/joinchat/0S7nOjfkV2E2OTAy</string>
+    <string name="developer_telegram_link" translatable="false">https://t.me/joinchat/0S7nOjfkV2E2OTAy</string>
+
+    <string name="manual_connection">Manual connection</string>
+    <string name="manual_connection_summary">You can connect here if this application is ignoring Wi-Fi state</string>
+    <string name="pref_networks">Wi‑Fi networks</string>
+    <string name="pref_networks_summary">Pick a supported network and start manual login</string>
+    <string name="pref_networks_current">Current Wi‑Fi</string>
+    <string name="pref_networks_current_summary">Connected to %1$s (supported)</string>
+    <string name="pref_networks_current_unknown">Connected to %1$s (not in list / unknown)</string>
+    <string name="pref_networks_connect_auto">Connect (current network)</string>
+    <string name="pref_networks_connect_auto_summary">Force login using the network you are on now</string>
+    <string name="pref_networks_item_summary">Tap to start manual login for this SSID</string>
+    <string name="pref_networks_item_connected">Currently connected — tap to reconnect</string>
+    <string name="pref_networks_cat_transport">Transport (metro / MCC / ground)</string>
+    <string name="pref_networks_cat_city">City Wi‑Fi</string>
+    <string name="pref_networks_cat_mts">MTS Wi‑Fi</string>
+    <string name="pref_networks_cat_other">Other</string>
+    <string name="manual_connection_shortcut">Create shortcut</string>
+
+    <string name="view_log">View log</string>
+    <string name="view_log_summary">Press here to view logs of previous runs.</string>
+
+    <string name="shortcut_background">Connect in the background</string>
+    <string name="shortcut_force">Even if network name is unknown</string>
+
+    <string name="auth_connecting" formatted="false">Connecting to %s</string>
+    <string name="algorithm_name" formatted="false">Algorithm name: %s</string>
+    <string name="auth_waiting">Waiting…</string>
+    <string name="auth_checking_connection">Checking Internet connection</string>
+    <string name="auth_already_connected">Already connected</string>
+    <string name="auth_init">Initializing auth procedure</string>
+    <string name="auth_check">Checking auth status</string>
+    <string name="auth_finish">Finishing auth procedure</string>
+    <string name="auth_unknown_redirect">Unknown redirect. Trying to detect algorithm…</string>
+    <string name="auth_algorithm_switch">Switching to another algorithm: %s (this is not an error)</string>
+    <string name="auth_redirect">Getting redirection</string>
+    <string name="auth_auth_page">Getting login page</string>
+    <string name="auth_auth_form">Sending login form</string>
+    <string name="auth_connected">Connection established :3</string>
+
+    <string name="auth_error_connection">Internet connection is not available</string>
+    <string name="auth_error_redirect">redirect is not received</string>
+    <string name="auth_error_auth_page">login page is not received</string>
+    <string name="auth_error_not_registered">
+        device is not registered in the network\n Please, open http://wi-fi.ru
+        and register with your phone number to get SMS with further instructions.
+        It is only required the first time, after that application will work normally.\n
+        Disclaimer: This application developer has nothing to do with registration.
+        Registration is required by MaximaTelecom ISP (http://maximatelecom.ru).
+    </string>
+    <string name="auth_error_mainet_credentials">
+        Login and password are required to connect to this network. Please check \"MAInet (wifi.mai.ru)\" in \"Connection settings\" menu.
+    </string>
+    <string name="auth_error_bmstu_credentials">
+        Login and password are required to connect to this network. Please check \"bmstu_lb (lbpfs.bmstu.ru)\" in \"Connection settings\" menu.
+    </string>
+    <string name="auth_error_byfly_credentials">
+        Login and password are required to connect to this network. Please check \"ByFly (Beltelecom)\" in \"Connection settings\" menu.
+    </string>
+    <string name="auth_error_form">auth form not found</string>
+    <string name="auth_error_server">server does not respond or responds with error</string>
+    <string name="auth_error_provider">unable to identify the provider</string>
+    <string name="auth_error_mosmetrov3_loop">expected redirect to another algorithm, received redirect to MosMetroV3 (infinite loop)</string>
+    <string name="auth_error_fatal">unexpected exception in Provider</string>
+
+    <string name="notification_success">Successfully connected</string>
+    <string name="notification_success_log">Click for details</string>
+    <string name="notification_not_registered">Device is not registered</string>
+    <string name="notification_not_registered_register">Click to proceed with registration</string>
+    <string name="notification_error">Unable to connect</string>
+    <string name="notification_error_log">Click to get details or retry</string>
+    <string name="notification_unsupported">Network is not supported</string>
+    <string name="notification_progress_waiting">Waiting…</string>
+
+    <string name="ip_wait">Waiting for IP address…</string>
+    <string name="ip_wait_result" formatted="false">IP address%s assigned within %d seconds</string>
+
+    <string name="contirutor_revertron" translatable="false">Revertron</string>
+    <string name="contributor_revertron_summary">Numerous algorithm recommendations</string>
+    <string name="contributor_revertron_link" translatable="false">https://github.com/Revertron</string>
+    <string name="contrinutor_Mikhail_Kuropatkin_summary">Helped collecting authentication dumps</string>
+    <string name="contributor_Mikhail_Kuropatkin" translatable="false">Mikhail Kuropatkin</string>
+    <string name="contributor_Mikhail_Kuropatkin_link" translatable="false">https://telegram.me/kuropatkin</string>
+    <string name="contributor_Alexander_Krotov" translatable="false">Alexander Krotov</string>
+    <string name="contributor_Alexander_Krotov_summary">First Pull-request, Gradle migration, English translation</string>
+    <string name="contributor_Alexander_Krotov_link" translatable="false">https://github.com/ilabdsf</string>
+    <string name="contributor_Igor_Dyatlov" translatable="false">Igor Dyatlov</string>
+    <string name="contributor_Igor_Dyatlov_summary">Graphic design, logo</string>
+    <string name="contributor_Igor_Dyatlov_link" translatable="false">https://github.com/igor-dyatlov</string>
+
+    <string name="pref_category_wifi">Wi-Fi control</string>
+    <string name="pref_category_internet">Internet checks</string>
+    <string name="open_settings">Open settings</string>
+    <string name="permission_request">Request the permission</string>
+    <string name="dialog_battery_saving">Energy saving</string>
+    <string name="dialog_battery_saving_summary">Starting with Android 6.0, you need to add this application to the energy saving whitelist, so that it can access the network in the background. Otherwise, background process may completely freeze due to the new energy saving policy.</string>
+
+    <string name="receiver_auto_connect">Auto connect</string>
+    <string name="more_information">About &amp; credits</string>
+    <string name="more_information_summary">Brand info and open-source acknowledgments</string>
+    <string name="auth_provider_check">Detecting the provider…</string>
+    <string name="stop">Stop</string>
+    <string name="pref_notify_foreground">Foreground process</string>
+    <string name="pref_notify_foreground_summary">Bind background process to notification to protect it from being killed. If you disable this option, background process will be killed even if you simply open and close the app window.</string>
+    <string name="pref_timeout">Connection timeout</string>
+    <string name="pref_timeout_summary">Number of seconds to wait for server answer. If 0 is set, application will wait until connection error is caught (default: 5).</string>
+    <string name="toast_unsupported_function">This function seems to be unsupported on your device. Sorry :(</string>
+    <string name="toast_view_exception">Looks like you don\'t have any apps suitable for this link.</string>
+    <string name="pref_notify_priority">Notification priority</string>
+    <string name="pref_notify_priority_summary">A value between -2 and 2 that affects the priority of all notifications. (default: 0)</string>
+    <string name="pref_notify_success">Connected successfully</string>
+    <string name="pref_notify_success_summary">Notify on successful connection</string>
+    <string name="error_log_file">failed to save log to file</string>
+    <string name="pref_internet_check_interval">Interval of checks</string>
+    <string name="pref_internet_check_interval_summary">Amount of seconds between internet checks. Affects traffic and power consumption.</string>
+    <string name="pref_delay_range">Delay range (milliseconds)</string>
+    <string name="pref_delay_range_summary">Range of random delays applied for every request.</string>
+    <string name="pref_user_agent">User-Agent header</string>
+    <string name="pref_user_agent_summary">Set the User-Agent HTTP header to disguise this app as browser. The random one is chosen by default.</string>
+    <string name="do_not_warn">Do not warn anymore</string>
+    <string name="pref_share_warning">Be careful!</string>
+    <string name="pref_share_warning_summary">Connection log may contain sensitive data such as your MAC-address or phone number. Do not send this file to public chats or social networks.</string>
+    <string name="pref_delay_enabled">Delays between requests</string>
+    <string name="pref_delay_enabled_summary">Slow down the connection process by adding random delays between HTTP-requests to avoid possible bans from the provider.</string>
+    <string name="pref_category_delays">Random delays</string>
+    <string name="manual_connection_shortcut_summary">Start manual connection directly from launcher</string>
+    <string name="pref_debug_logcat">System log</string>
+    <string name="pref_debug_logcat_summary">Write log messages to system log to allow debugging in case of crash.</string>
+    <string name="pref_debug_acra">Crash reports</string>
+    <string name="pref_debug_acra_summary">Automatically send crash reports to application developer.</string>
+    <string name="pref_updater_branch_stable">Main branches</string>
+    <string name="pref_updater_branch_experimental">Experimental branches</string>
+    <string name="pref_debug">Debug options</string>
+    <string name="pref_debug_summary">Automatic reports, LogCat, etc.</string>
+    <string name="pref_mosmetro_v3" translatable="false">MosMetroV3 (welcome.wi-fi.ru)</string>
+    <string name="pref_mosmetro_v3_summary">This algorithm was used during the 2018 FIFA World Cup in Moscow and St. Petersburg. It is currently disabled, so most likely this setting will not affect anything.</string>
+    <string name="pref_mainet" translatable="false">MAInet (wifi.mai.ru)</string>
+    <string name="pref_mainet_summary">This algorithm is required to connect to MAInet_public — public Wi-Fi network of Moscow Aviation Institute</string>
+    <string name="pref_bmstu" translatable="false">bmstu_lb (lbpfs.bmstu.ru)</string>
+    <string name="pref_bmstu_summary">This algorithm is required to connect to bmstu_lb — public Wi-Fi network of Bauman Moscow State Technical University.</string>
+    <string name="pref_debug_last_log">Send the last log</string>
+    <string name="pref_debug_last_log_summary">Log will be sent along with Sentry reports in case of crash.</string>
+    <string name="location_permission">Location permission</string>
+    <string name="location_permission_saving">Android 9+ requires location access in order to get the name of the Wi-Fi network. Without this permission app will not start automatically, but you can still connect manually through main menu or shortcuts.</string>
+    <string name="log_wipe_confirmation">Clear log file?</string>
+    <string name="pref_mosmetro_v2_wv">MosMetroV2WV (beta)</string>
+    <string name="pref_mosmetro_v2_wv_summary">Extension of MosMetroV2 that uses headless browser and JavaScript instead of hardcoded HTTP requests. Slower but safer if the provider would start to take action against this app\'s users again.</string>
+    <string name="pref_mosmetro_v2_wv_warning">This algorithm is less stable than MosMetroV2. It may freeze, crash or just connect very slowly. Do you really want to enable it?</string>
+    <string name="auth_webview_page">Opening auth page</string>
+    <string name="auth_webview_page_wait">Waiting for page to load</string>
+    <string name="auth_webview_script">Waiting for script</string>
+    <string name="pref_internet_midsession">Handle midsession</string>
+    <string name="pref_internet_midsession_summary">If you are seeing \"Sign into Wi-Fi network\" in your notifications, or Android thinks that internet is not available even if it actually is, this option might help.</string>
+    <string name="pref_debug_testing">Participation in testing</string>
+    <string name="pref_debug_testing_summary">Send conditional automated reports. Conditions change in every update and are targeting new functions and fixes. Reports contain last log, app version and some information about system and device.</string>
+    <string name="receiver_service_title">Waiting for Wi-Fi connection</string>
+    <string name="reveiver_service_summary">Tap here to open settings</string>
+    <string name="pref_autoconnect_service_title">Persistent service</string>
+    <string name="pref_autoconnect_service_summary">Enable this option if the application does not automatically start when the device connects to Wi-Fi</string>
+    <string name="force_on">Enable anyway</string>
+    <string name="force_off">Disable anyway</string>
+    <string name="coarse_location_permission">Android 9+ requires location access in order to get the name of the Wi-Fi network. Without this permission app will not start automatically even if this option is enabled.</string>
+    <string name="background_location_permission">Android 9+ requires background location access or persistent notification in order to be able to get the name of the Wi-Fi network. Without this permission app will not start automatically when this option is disabled.</string>
+    <string name="algorithms">Algorithms</string>
+    <string name="pref_manual_connection_monitoring">After manual connection</string>
+    <string name="pref_manual_connection_monitoring_summary">Continue to monitor internet connection after successful manual connection until disconnecting from Wi-Fi. It is required for midsession detection.</string>
+    <string name="pref_dnsjava">Alternative DNS client</string>
+    <string name="pref_dnsjava_summary">Always use custom DNS client instead of the system one</string>
+    <string name="update_error">Unable to install the update. Please try \"Download\" instead of \"Install\"</string>
+    <string name="root_unavailable">Root is unavailable</string>
+    <string name="captive_fix_message">You need to have root permissions or a PC to apply this fix. This is only needed to be done once.</string>
+    <string name="captive_fix_open_manual">Guide for PC</string>
+    <string name="captive_fix_manual_url" translatable="false">https://git.io/JR9Tl</string>
+    <string name="pref_captive_fix">Fix system-wide check</string>
+    <string name="pref_captive_fix_summary">Android does not want to use some Wi-Fi networks because of incorrect responses from the provider. Enable this option to change the system-wide connectivity check URL to a more reliable one. [Requires root or PC]</string>
+    <string name="captive" translatable="false">Captive Portal</string>
+    <string name="pref_captive_notification">Midsession detected! Tap &gt;here&lt; if Android doesn\'t want to use the Wi-Fi network.</string>
+    <string name="midsession_dialog">To make Android ignore the midsession, please try one of these options:\n\n1) Disable mobile data while using Wi-Fi;\n\n2) Tap on the \"Sign in to Wi-Fi network\" notification and choose \"Use this network as is\" in the menu bar;\n\n3) Enable \"Fix system-wide check\" in preferences (requires root or a PC, but needs to be done only once);\n\n4) Enable \"Handle midsession\" in preferences (might not work depending on the internet provider).</string>
+    <string name="logaction_mmv2wv_toggle">Too slow? Tap &gt;here&lt; to disable MosMetroV2WV and switch to a faster MosMetroV2 algorithm</string>
+    <string name="done">Done!</string>
+    <string name="auth_midsession_fail">Unable to handle midsession. If you see this message too often, tap &gt;here&lt; to disable this function.</string>
+    <string name="auth_midsession_start">Attempting to bypass the midsession</string>
+    <string name="vpn_warning">VPN detected! Some VPN apps or traffic filters may interfere with this app even if it was added to blacklist. Please disable the VPN and try again.</string>
+    <string name="pref_wifi_any_ssid">Check every network</string>
+    <string name="pref_wifi_any_ssid_summary">Perform quick DNS check in every unknown Wi-Fi network in attempt to find signs of any supported algorithm.</string>
+    <string name="send">Send</string>
+    <string name="feedback_title">Send feedback</string>
+    <string name="feedback_description">Problem description (not required)</string>
+    <string name="share">Share</string>
+    <string name="pref_debug_stats">Participation in statistics</string>
+    <string name="pref_debug_stats_summary">App will collect anonymous metrics about connections. In addition to fully internal metrics (app version, algorithm, etc.) reports may include OS version and the name of the Wi-Fi network.</string>
+    <string name="pref_byfly_summary">This algorithm is required to connect to \"BELTELECOM\" and \"byfly WIFI\" — paid Wi-Fi networks in Belarus.</string>
+    <string name="pref_byfly">ByFly (Beltelecom)</string>
+</resources>
