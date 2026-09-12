@@ -105,15 +105,16 @@ public abstract class Provider extends LinkedList<Task> implements Task {
 
     protected static List<String> getDnsCheckDomains(Context context) {
         LinkedList<String> result = new LinkedList<>();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        pw.thedrhax.util.CredentialStore creds =
+                new pw.thedrhax.util.CredentialStore(context);
 
         result.add("auth.wi-fi.ru");
 
-        if (!settings.getString("pref_bmstu_credentials_login", "").isEmpty()) {
+        if (!creds.getLogin("pref_bmstu_credentials").isEmpty()) {
             result.add("lbpfs.bmstu.ru");
         }
 
-        if (!settings.getString("pref_mainet_credentials_login", "").isEmpty()) {
+        if (!creds.getLogin("pref_mainet_credentials").isEmpty()) {
             result.add("wifi.mai.ru");
         }
 

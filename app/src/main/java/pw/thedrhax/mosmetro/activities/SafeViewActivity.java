@@ -41,7 +41,21 @@ public class SafeViewActivity extends Activity {
             finish(); return;
         }
 
-        Uri data = Uri.parse(getIntent().getStringExtra("data"));
+        String raw = getIntent().getStringExtra("data");
+        if (raw == null || raw.isEmpty()) {
+            finish(); return;
+        }
+
+        Uri data = Uri.parse(raw);
+        String scheme = data.getScheme();
+        if (scheme == null || !(scheme.equalsIgnoreCase("http")
+                || scheme.equalsIgnoreCase("https")
+                || scheme.equalsIgnoreCase("market"))) {
+            Toast.makeText(this, R.string.toast_view_exception, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         Intent intent = new Intent(Intent.ACTION_VIEW, data);
 
         if (getIntent().hasExtra("action")) {

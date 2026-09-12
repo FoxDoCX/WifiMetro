@@ -32,6 +32,7 @@ import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -72,13 +73,40 @@ public class WifiUtils {
         return (text != null && !text.isEmpty()) ? text.replace("\"", "") : UNKNOWN_SSID;
     }
 
-    // Get WifiInfo from Intent or, if not available, from WifiManager
+    // Get WifiInfo from Intent or, if not available, from WifiManager / NetworkCapabilities
     public WifiInfo getWifiInfo(Intent intent) {
         if (intent != null) {
             WifiInfo result = intent.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
             if (result != null) return result;
         }
+
+        if (Build.VERSION.SDK_INT >= 29) {
+            WifiInfo fromCaps = getWifiInfoFromCapabilities();
+            if (fromCaps != null) return fromCaps;
+        }
+
         return wm.getConnectionInfo();
+    }
+
+    @Nullable
+    @RequiresApi(29)
+    private WifiInfo getWifiInfoFromCapabilities() {
+        Network network = cm.getActiveNetwork();
+        if (network == null) {
+            network = getNetwork(ConnectivityManager.TYPE_WIFI);
+        }
+        if (network == null) return null;
+
+        NetworkCapabilities caps = cm.getNetworkCapabilities(network);
+        if (caps == null || !caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            return null;
+        }
+
+        Object transport = caps.getTransportInfo();
+        if (transport instanceof WifiInfo) {
+            return (WifiInfo) transport;
+        }
+        return null;
     }
 
     // Get SSID from Intent's EXTRA_WIFI_INFO (API > 14)
@@ -89,6 +117,12 @@ public class WifiUtils {
     // Get SSID directly from WifiManager
     public String getSSID() {
         return getSSID(null);
+    }
+
+    /** True when SSID could not be read (usually missing location / nearby Wi‑Fi permission). */
+    public boolean isSsidUnknown() {
+        String ssid = getSSID();
+        return UNKNOWN_SSID.equalsIgnoreCase(ssid) || ssid.isEmpty();
     }
 
     // Get current IP from WifiManager

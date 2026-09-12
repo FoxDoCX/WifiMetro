@@ -321,10 +321,9 @@ public class ConnectionService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) return START_NOT_STICKY;
 
-        // Android O+: startForeground must happen quickly after startForegroundService()
-        if (pref_notify_foreground) {
-            notify.locked(true).show();
-        }
+        // Android O+: startForeground MUST run quickly after startForegroundService(),
+        // even if the user disabled "persistent" notification preference.
+        notify.locked(true).show();
 
         // Stop by intent
         if (ACTION_STOP.equals(intent.getAction()) || intent.getBooleanExtra(EXTRA_STOP, false)) {

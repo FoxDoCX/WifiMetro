@@ -1,17 +1,17 @@
 package pw.thedrhax.mosmetro.preferences;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+
 import pw.thedrhax.mosmetro.R;
+import pw.thedrhax.util.CredentialStore;
 
 public class LoginFormPreference extends DialogPreference {
-    private SharedPreferences settings;
+    private CredentialStore creds;
     private EditText text_login;
     private EditText text_password;
 
@@ -36,8 +36,8 @@ public class LoginFormPreference extends DialogPreference {
     }
     
     private void init(Context context) {
-        settings = PreferenceManager.getDefaultSharedPreferences(context);
-    };
+        creds = new CredentialStore(context);
+    }
 
     @Override
     protected View onCreateDialogView() {
@@ -46,21 +46,21 @@ public class LoginFormPreference extends DialogPreference {
                 .inflate(R.layout.loginform_preference, null);
 
         text_login = (EditText) v.findViewById(R.id.text_login);
-        text_login.setText(settings.getString(getKey() + "_login", ""));
+        text_login.setText(creds.getLogin(getKey()));
 
         text_password = (EditText) v.findViewById(R.id.text_password);
-        text_password.setText(settings.getString(getKey() + "_password", ""));
+        text_password.setText(creds.getPassword(getKey()));
 
         return v;
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        if (positiveResult)
-            settings.edit()
-                    .putString(getKey() + "_login", text_login.getText().toString())
-                    .putString(getKey() + "_password", text_password.getText().toString())
-                    .apply();
+        if (positiveResult) {
+            creds.put(getKey(),
+                    text_login.getText().toString(),
+                    text_password.getText().toString());
+        }
 
         super.onDialogClosed(positiveResult);
     }

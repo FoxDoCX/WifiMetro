@@ -112,6 +112,49 @@ public final class PermissionUtils {
     }
 
     /**
+     * Android 13+: NEARBY_WIFI_DEVICES is enough to read SSID without location
+     * when declared with neverForLocation.
+     */
+    public boolean isNearbyWifiGranted() {
+        if (Build.VERSION.SDK_INT < 33) return true;
+        int p = ContextCompat.checkSelfPermission(context, Manifest.permission.NEARBY_WIFI_DEVICES);
+        return p == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @RequiresApi(33)
+    public void requestNearbyWifi(Activity activity, int requestCode) {
+        activity.requestPermissions(new String[] {Manifest.permission.NEARBY_WIFI_DEVICES}, requestCode);
+    }
+
+    /** True if the app can read the current Wi‑Fi SSID on this Android version. */
+    public boolean canReadWifiSsid() {
+        if (Build.VERSION.SDK_INT >= 33) {
+            return isNearbyWifiGranted() || isFineLocationGranted() || isCoarseLocationGranted();
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            return isFineLocationGranted() || isCoarseLocationGranted();
+        }
+        return true;
+    }
+
+    public boolean canDrawOverlays() {
+        if (Build.VERSION.SDK_INT < 23) return true;
+        return Settings.canDrawOverlays(context);
+    }
+
+    @RequiresApi(23)
+    public void requestOverlayPermission() {
+        try {
+            context.startActivity(new Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + context.getPackageName())
+            ));
+        } catch (ActivityNotFoundException ex) {
+            Toast.makeText(context, R.string.toast_unsupported_function, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
      * Battery saving permissions.
      */
 

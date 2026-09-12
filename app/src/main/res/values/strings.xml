@@ -120,10 +120,14 @@
     <string name="pref_networks_current">Current Wi‑Fi</string>
     <string name="pref_networks_current_summary">Connected to %1$s (supported)</string>
     <string name="pref_networks_current_unknown">Connected to %1$s (not in list / unknown)</string>
+    <string name="pref_networks_current_no_permission">SSID unavailable — grant Nearby Wi‑Fi or Location permission</string>
+    <string name="pref_networks_fix_permission">Grant Wi‑Fi permission</string>
+    <string name="pref_networks_fix_permission_summary">Open app settings and allow Nearby devices / Location so auto-login can see the network name</string>
     <string name="pref_networks_connect_auto">Connect (current network)</string>
     <string name="pref_networks_connect_auto_summary">Force login using the network you are on now</string>
     <string name="pref_networks_item_summary">Tap to start manual login for this SSID</string>
     <string name="pref_networks_item_connected">Currently connected — tap to reconnect</string>
+    <string name="pref_networks_item_limited">May need browser / no silent login</string>
     <string name="pref_networks_cat_transport">Transport (metro / MCC / ground)</string>
     <string name="pref_networks_cat_city">City Wi‑Fi</string>
     <string name="pref_networks_cat_mts">MTS Wi‑Fi</string>
@@ -255,6 +259,7 @@
     <string name="pref_debug_last_log_summary">Log will be sent along with Sentry reports in case of crash.</string>
     <string name="location_permission">Location permission</string>
     <string name="location_permission_saving">Android 9+ requires location access in order to get the name of the Wi-Fi network. Without this permission app will not start automatically, but you can still connect manually through main menu or shortcuts.</string>
+    <string name="nearby_wifi_permission_saving">Android 13+ can read the Wi‑Fi name via the Nearby devices permission (without location). Grant it for reliable auto-login. You can still connect manually without it.</string>
     <string name="log_wipe_confirmation">Clear log file?</string>
     <string name="pref_mosmetro_v2_wv">MosMetroV2WV (beta)</string>
     <string name="pref_mosmetro_v2_wv_summary">Extension of MosMetroV2 that uses headless browser and JavaScript instead of hardcoded HTTP requests. Slower but safer if the provider would start to take action against this app\'s users again.</string>

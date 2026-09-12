@@ -10,19 +10,31 @@ WifiMetro — полный список изменений относитель�
 
 Текущая сборка:
   Название     : WifiMetro
-  versionName  : 2.8.3
-  versionCode  : 87 (ABI-сплиты: v7a → 871, arm64 → 872)
+  versionName  : 2.8.4
+  versionCode  : 88 (ABI-сплиты: v7a → 881, arm64 → 882)
   Автор сборки : FoxDoC
-  Дата отчёта  : 2026-08-04
+  Дата отчёта  : 2026-09-13
   Лицензия     : GPL-3.0 (без изменений)
 
 Артефакты:
-  dist/WifiMetro-2.8.3-FoxDoC-android16-arm64-v8a-debug.apk
-  dist/WifiMetro-2.8.3-FoxDoC-android16-armeabi-v7a-debug.apk
+  dist/WifiMetro-2.8.4-FoxDoC-android16-arm64-v8a-debug.apk
+  dist/WifiMetro-2.8.4-FoxDoC-android16-armeabi-v7a-debug.apk
 
 ================================================================================
-1. ВЕРСИЯ И ЦЕЛЕВАЯ ПЛАТФОРМА
+0. 2.8.4 — надёжность автологина и безопасность
 ================================================================================
+
+- FGS: всегда startForeground сразу после startForegroundService (фикс краша
+  при pref_notify_foreground=false)
+- Android 13+: NEARBY_WIFI_DEVICES (neverForLocation) + UX запроса разрешения
+- WifiUtils: чтение SSID через NetworkCapabilities (API 29+)
+- WebViewService: TYPE_APPLICATION_OVERLAY вместо TYPE_TOAST
+- allowBackup=false; логины/пароли в CredentialStore (AES-GCM / Keystore)
+- SafeViewActivity: exported=false + whitelist схем http/https/market
+- NetworksFragment: предупреждение без permission; MTS/город — «limited»
+- Меню сетей: кнопка «Выдать разрешение Wi‑Fi»
+
+
 
 Параметр          | Было (XeonDead HEAD) | Стало (WifiMetro 2.8.1)
 ------------------|----------------------|------------------------

@@ -78,8 +78,10 @@ public class MAInet extends Provider {
         add(new NamedTask(context.getString(R.string.auth_auth_form)) {
             @Override
             public boolean run(HashMap<String, Object> vars) {
-                String login = settings.getString(CREDS_KEY + "_login", "");
-                String password = settings.getString(CREDS_KEY + "_password", "");
+                pw.thedrhax.util.CredentialStore creds =
+                        new pw.thedrhax.util.CredentialStore(context);
+                String login = creds.getLogin(CREDS_KEY);
+                String password = creds.getPassword(CREDS_KEY);
 
                 if (login.isEmpty() || password.isEmpty()) {
                     Logger.log(context.getString(R.string.error, 

@@ -20,6 +20,7 @@ import pw.thedrhax.mosmetro.R;
 import pw.thedrhax.mosmetro.activities.DebugActivity;
 import pw.thedrhax.mosmetro.authenticator.Provider;
 import pw.thedrhax.mosmetro.services.ConnectionService;
+import pw.thedrhax.util.PermissionUtils;
 import pw.thedrhax.util.Util;
 import pw.thedrhax.util.WifiUtils;
 
@@ -37,7 +38,6 @@ public class NetworksFragment extends NestedFragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Refresh "current Wi‑Fi" when returning from system settings / Debug.
         if (getPreferenceScreen() != null) {
             rebuild();
         }
@@ -47,17 +47,36 @@ public class NetworksFragment extends NestedFragment {
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
         setPreferenceScreen(screen);
 
-        String current = new WifiUtils(getActivity()).getSSID();
+        WifiUtils wifi = new WifiUtils(getActivity());
+        PermissionUtils pu = new PermissionUtils(getActivity());
+        String current = wifi.getSSID();
         boolean known = Provider.isSSIDSupported(current);
+        boolean canRead = pu.canReadWifiSsid();
 
         Preference currentPref = new Preference(getActivity());
         currentPref.setKey("pref_networks_current");
         currentPref.setTitle(R.string.pref_networks_current);
-        currentPref.setSummary(known
-                ? getString(R.string.pref_networks_current_summary, current)
-                : getString(R.string.pref_networks_current_unknown, current));
+        if (!canRead || wifi.isSsidUnknown()) {
+            currentPref.setSummary(R.string.pref_networks_current_no_permission);
+        } else if (known) {
+            currentPref.setSummary(getString(R.string.pref_networks_current_summary, current));
+        } else {
+            currentPref.setSummary(getString(R.string.pref_networks_current_unknown, current));
+        }
         currentPref.setSelectable(false);
         screen.addPreference(currentPref);
+
+        if (!canRead) {
+            Preference fix = new Preference(getActivity());
+            fix.setKey("pref_networks_fix_perm");
+            fix.setTitle(R.string.pref_networks_fix_permission);
+            fix.setSummary(R.string.pref_networks_fix_permission_summary);
+            fix.setOnPreferenceClickListener(p -> {
+                pu.openAppSettings();
+                return true;
+            });
+            screen.addPreference(fix);
+        }
 
         Preference auto = new Preference(getActivity());
         auto.setKey("pref_networks_auto");
@@ -69,7 +88,6 @@ public class NetworksFragment extends NestedFragment {
         });
         screen.addPreference(auto);
 
-        // Deduplicate case-insensitively, keep first spelling
         Set<String> seen = new LinkedHashSet<>();
         LinkedHashSet<String> transport = new LinkedHashSet<>();
         LinkedHashSet<String> city = new LinkedHashSet<>();
@@ -97,14 +115,14 @@ public class NetworksFragment extends NestedFragment {
             }
         }
 
-        addCategory(screen, R.string.pref_networks_cat_transport, transport, current);
-        addCategory(screen, R.string.pref_networks_cat_city, city, current);
-        addCategory(screen, R.string.pref_networks_cat_mts, mts, current);
-        addCategory(screen, R.string.pref_networks_cat_other, other, current);
+        addCategory(screen, R.string.pref_networks_cat_transport, transport, current, false);
+        addCategory(screen, R.string.pref_networks_cat_city, city, current, true);
+        addCategory(screen, R.string.pref_networks_cat_mts, mts, current, true);
+        addCategory(screen, R.string.pref_networks_cat_other, other, current, false);
     }
 
     private void addCategory(PreferenceScreen screen, int titleRes,
-                             LinkedHashSet<String> ssids, String current) {
+                             LinkedHashSet<String> ssids, String current, boolean limited) {
         if (ssids.isEmpty()) return;
         PreferenceCategory cat = new PreferenceCategory(getActivity());
         cat.setKey("cat_" + titleRes);
@@ -116,9 +134,13 @@ public class NetworksFragment extends NestedFragment {
             pref.setKey("ssid_" + ssid.replace(' ', '_').replace('-', '_'));
             pref.setTitle(ssid);
             boolean match = current != null && ssid.equalsIgnoreCase(current);
-            pref.setSummary(match
-                    ? getString(R.string.pref_networks_item_connected)
-                    : getString(R.string.pref_networks_item_summary));
+            if (match) {
+                pref.setSummary(R.string.pref_networks_item_connected);
+            } else if (limited) {
+                pref.setSummary(R.string.pref_networks_item_limited);
+            } else {
+                pref.setSummary(R.string.pref_networks_item_summary);
+            }
             final String target = ssid;
             pref.setOnPreferenceClickListener(p -> {
                 startManual(target);

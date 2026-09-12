@@ -110,10 +110,14 @@
     <string name="pref_networks_current">Текущий Wi‑Fi</string>
     <string name="pref_networks_current_summary">Подключено к %1$s (поддерживается)</string>
     <string name="pref_networks_current_unknown">Подключено к %1$s (нет в списке / неизвестно)</string>
+    <string name="pref_networks_current_no_permission">SSID недоступен — выдайте разрешение «Устройства поблизости» или «Местоположение»</string>
+    <string name="pref_networks_fix_permission">Выдать разрешение Wi‑Fi</string>
+    <string name="pref_networks_fix_permission_summary">Откройте настройки приложения и разрешите доступ к устройствам поблизости / местоположению, чтобы автологин видел имя сети</string>
     <string name="pref_networks_connect_auto">Подключиться (текущая сеть)</string>
     <string name="pref_networks_connect_auto_summary">Принудительный вход в сеть, к которой вы подключены сейчас</string>
     <string name="pref_networks_item_summary">Нажмите, чтобы запустить ручной вход для этой сети</string>
     <string name="pref_networks_item_connected">Сейчас подключено — нажмите, чтобы переподключить</string>
+    <string name="pref_networks_item_limited">Может понадобиться браузер / нет silent-login</string>
     <string name="pref_networks_cat_transport">Транспорт (метро / МЦК / наземный)</string>
     <string name="pref_networks_cat_city">Городской Wi‑Fi</string>
     <string name="pref_networks_cat_mts">МТС Wi‑Fi</string>
@@ -237,6 +241,7 @@
     <string name="pref_debug_last_log_summary">Лог будет отправляться вместе с отчетами Sentry в случае сбоя.</string>
     <string name="location_permission">Определение местоположения</string>
     <string name="location_permission_saving">Чтобы приложение могло узнать название сети Wi-Fi, Android 9+ требует доступ к местоположению. Без этого разрешения приложение не сможет подключаться автоматически, но вы по-прежнему сможете использовать ручное подключение в главном меню или через ярлыки.</string>
+    <string name="nearby_wifi_permission_saving">На Android 13+ имя Wi‑Fi сети можно читать через разрешение «Устройства поблизости» (без геолокации). Выдайте его для надёжного автологина. Без него останется ручное подключение.</string>
     <string name="log_wipe_confirmation">Очистить файл лога?</string>
     <string name="auth_webview_page">Получение страницы авторизации</string>
     <string name="auth_webview_page_wait">Ожидание загрузки страницы</string>

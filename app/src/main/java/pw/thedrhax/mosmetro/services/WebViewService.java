@@ -22,21 +22,24 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.Nullable;
-
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.Nullable;
+
 import pw.thedrhax.mosmetro.R;
 import pw.thedrhax.mosmetro.httpclient.Client;
 import pw.thedrhax.mosmetro.httpclient.InterceptedWebViewClient;
 import pw.thedrhax.mosmetro.httpclient.clients.OkHttp;
 import pw.thedrhax.util.Listener;
+import pw.thedrhax.util.Logger;
 
 public class WebViewService extends Service {
     private final Listener<Boolean> running = new Listener<Boolean>(true) {
@@ -52,48 +55,75 @@ public class WebViewService extends Service {
     private WindowManager wm;
     private WebView webview;
     private InterceptedWebViewClient webviewclient;
+    private boolean overlayAttached = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
         setContentView(R.layout.webview_activity);
         Client client = new OkHttp(this).setRunningListener(running);
-        webview = (WebView)view.findViewById(R.id.webview);
-        webviewclient = new InterceptedWebViewClient(this, client, webview);
-        webviewclient.setup();
+        if (view != null) {
+            webview = (WebView) view.findViewById(R.id.webview);
+            webviewclient = new InterceptedWebViewClient(this, client, webview);
+            webviewclient.setup();
+        }
     }
 
     private void setContentView(@LayoutRes int layoutResID) {
         view = new LinearLayout(this);
 
-        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         if (inflater != null) {
             inflater.inflate(layoutResID, view);
         } else {
             return;
         }
 
+        int type;
+        if (Build.VERSION.SDK_INT >= 26) {
+            type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else if (Build.VERSION.SDK_INT >= 23) {
+            type = WindowManager.LayoutParams.TYPE_PHONE;
+        } else {
+            type = WindowManager.LayoutParams.TYPE_TOAST;
+        }
+
+        if (Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
+            Logger.log(this, "SYSTEM_ALERT_WINDOW not granted — WebView overlay skipped");
+            return;
+        }
+
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.TYPE_TOAST,
+                type,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 PixelFormat.TRANSLUCENT
         );
 
-        wm = (WindowManager)getSystemService(WINDOW_SERVICE);
+        wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         if (wm != null) {
-            wm.addView(view, params);
+            try {
+                wm.addView(view, params);
+                overlayAttached = true;
+            } catch (RuntimeException ex) {
+                Logger.log(Logger.LEVEL.DEBUG, ex);
+                overlayAttached = false;
+            }
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        webviewclient.onDestroy();
+        if (webviewclient != null) {
+            webviewclient.onDestroy();
+        }
         webview = null;
-        if (view != null && wm != null) {
-            wm.removeView(view);
+        if (overlayAttached && view != null && wm != null) {
+            try {
+                wm.removeView(view);
+            } catch (RuntimeException ignored) {}
         }
         destroyed.set(true);
     }
@@ -111,6 +141,7 @@ public class WebViewService extends Service {
     }
 
     public void get(final String url) {
+        if (webview == null) return;
         webview.getHandler().post(new Runnable() {
             @Override
             public void run() {
@@ -120,11 +151,13 @@ public class WebViewService extends Service {
     }
 
     public String getUrl() {
-        return webviewclient.getUrl();
+        return webviewclient != null ? webviewclient.getUrl() : null;
     }
 
     public void setClient(Client client) {
-        webviewclient.setClient(client);
+        if (webviewclient != null) {
+            webviewclient.setClient(client);
+        }
     }
 
     /*

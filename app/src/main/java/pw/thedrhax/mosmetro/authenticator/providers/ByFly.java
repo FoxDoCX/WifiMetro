@@ -117,8 +117,10 @@ public class ByFly extends Provider {
             public boolean run(HashMap<String, Object> vars) {
                 HtmlForm form = (HtmlForm) vars.get("form");
 
-                String login = settings.getString(CREDS_KEY + "_login", "");
-                String password = settings.getString(CREDS_KEY + "_password", "");
+                pw.thedrhax.util.CredentialStore creds =
+                        new pw.thedrhax.util.CredentialStore(context);
+                String login = creds.getLogin(CREDS_KEY);
+                String password = creds.getPassword(CREDS_KEY);
 
                 if (login.isEmpty() || password.isEmpty()) {
                     Logger.log(context.getString(R.string.error,

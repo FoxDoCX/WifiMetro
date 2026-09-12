@@ -236,8 +236,14 @@ public class SettingsActivity extends Activity {
                 .setPositiveButton(R.string.permission_request, (dialogInterface, i) -> {
                     permissionRequestTimestamp = System.currentTimeMillis();
 
-                    if (coarse || Build.VERSION.SDK_INT < 29) {
-                        pu.requestCoarseLocation(SettingsActivity.this, 1);
+                    if (coarse && Build.VERSION.SDK_INT >= 33 && !pu.isNearbyWifiGranted()) {
+                        pu.requestNearbyWifi(SettingsActivity.this, 4);
+                    } else if (coarse || Build.VERSION.SDK_INT < 29) {
+                        if (Build.VERSION.SDK_INT >= 26) {
+                            pu.requestFineLocation(SettingsActivity.this, 1);
+                        } else {
+                            pu.requestCoarseLocation(SettingsActivity.this, 1);
+                        }
                     } else {
                         pu.requestBackgroundLocation(SettingsActivity.this, 2);
                     }
@@ -251,14 +257,16 @@ public class SettingsActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // Request codes:
-        // 0 - from starting dialog
-        // 1 - requesting coarse location by enabling pref_autoconnect
+        // 0 - from starting dialog (fine location)
+        // 1 - requesting location by enabling pref_autoconnect
         // 2 - requesting background location by disabling pref_autoconnect_service
+        // 3 - notifications
+        // 4 - nearby Wi‑Fi (API 33+)
 
         // Approved or rejected automatically (too fast for user)
         boolean auto = System.currentTimeMillis() - permissionRequestTimestamp < 200;
 
-        if (auto && (requestCode == 1 || requestCode == 2)) {
+        if (auto && (requestCode == 1 || requestCode == 2 || requestCode == 4)) {
             openAppSettings();
         }
 
@@ -266,6 +274,7 @@ public class SettingsActivity extends Activity {
 
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             switch (permissions[0]) {
+                case Manifest.permission.NEARBY_WIFI_DEVICES:
                 case Manifest.permission.ACCESS_BACKGROUND_LOCATION:
                 case Manifest.permission.ACCESS_FINE_LOCATION:
                 case Manifest.permission.ACCESS_COARSE_LOCATION:
@@ -277,6 +286,7 @@ public class SettingsActivity extends Activity {
             }
         } else {
             switch (permissions[0]) {
+                case Manifest.permission.NEARBY_WIFI_DEVICES:
                 case Manifest.permission.ACCESS_FINE_LOCATION:
                 case Manifest.permission.ACCESS_COARSE_LOCATION:
                     changeCheckBox(pref_autoconnect, false);
@@ -290,11 +300,17 @@ public class SettingsActivity extends Activity {
     private void location_permission_setup() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.location_permission)
-                .setMessage(R.string.location_permission_saving)
+                .setMessage(Build.VERSION.SDK_INT >= 33
+                        ? getString(R.string.nearby_wifi_permission_saving)
+                        : getString(R.string.location_permission_saving))
                 .setPositiveButton(R.string.permission_request, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        pu.requestFineLocation(SettingsActivity.this, 0);
+                        if (Build.VERSION.SDK_INT >= 33) {
+                            pu.requestNearbyWifi(SettingsActivity.this, 4);
+                        } else {
+                            pu.requestFineLocation(SettingsActivity.this, 0);
+                        }
                     }
                 })
                 .setNeutralButton(R.string.open_settings, new DialogInterface.OnClickListener() {
@@ -314,12 +330,11 @@ public class SettingsActivity extends Activity {
                 });
 
         if (!settings.getBoolean("pref_location_ignore", false))
-            if (!pu.isCoarseLocationGranted() && !pu.isFineLocationGranted())
+            if (!pu.canReadWifiSsid())
                 dialog.show();
 
         if (!settings.getBoolean("pref_location_ignore_autoconnect", false)
-                && !pu.isCoarseLocationGranted()
-                && !pu.isFineLocationGranted()
+                && !pu.canReadWifiSsid()
                 && pref_autoconnect.isChecked()) {
             changeCheckBox(pref_autoconnect, false);
         }
@@ -405,7 +420,7 @@ public class SettingsActivity extends Activity {
                 boolean force = settings.getBoolean("pref_location_ignore_autoconnect", false);
 
                 if (!force && (Boolean)new_value && Build.VERSION.SDK_INT >= 28
-                        && !pu.isCoarseLocationGranted() && !pu.isFineLocationGranted()) {
+                        && !pu.canReadWifiSsid()) {
                     showLocationDialog(true);
                     return false;
                 }
@@ -520,7 +535,7 @@ public class SettingsActivity extends Activity {
                     getString(R.string.version, Version.getFormattedVersion()));
         }
 
-        // Updates disabled intentionally for WifiMetro builds
+        // First-run setup: permissions that affect auto-login reliability
         if (Build.VERSION.SDK_INT >= 23)
             energy_saving_setup();
         if (Build.VERSION.SDK_INT >= 28)
