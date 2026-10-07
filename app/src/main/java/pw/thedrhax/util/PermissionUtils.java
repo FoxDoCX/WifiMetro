@@ -93,7 +93,11 @@ public final class PermissionUtils {
 
     @RequiresApi(26)
     public void requestFineLocation(Activity activity, int requestCode) {
-        activity.requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, requestCode);
+        // Android 12+ ignores a FINE-only request; COARSE must be requested together.
+        activity.requestPermissions(new String[] {
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        }, requestCode);
     }
     @RequiresApi(29)
     public void requestBackgroundLocation(Activity activity, int requestCode) {

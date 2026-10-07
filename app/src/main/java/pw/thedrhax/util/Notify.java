@@ -43,6 +43,7 @@ public class Notify extends NotificationCompat.Builder {
     private boolean enabled = true;
     private boolean locked = false;
     private boolean big_text = true;
+    private boolean foreground_denied = false;
 
     public Notify(Context context) {
         super(context, CHANNEL_ID);
@@ -135,13 +136,21 @@ public class Notify extends NotificationCompat.Builder {
         Notification notification = build();
 
         if (locked && context instanceof Service) {
-            ServiceCompat.startForeground(
-                    (Service) context,
-                    id,
-                    notification,
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-            );
-            return this;
+            try {
+                ServiceCompat.startForeground(
+                        (Service) context,
+                        id,
+                        notification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+                );
+                foreground_denied = false;
+                return this;
+            } catch (IllegalStateException | SecurityException ex) {
+                // Android 14+: missing FGS type permission; Android 15+: dataSync from
+                // BOOT_COMPLETED or exhausted 6h dataSync quota.
+                foreground_denied = true;
+                Logger.log(Logger.LEVEL.DEBUG, ex);
+            }
         }
 
         if (locked) {
@@ -152,6 +161,10 @@ public class Notify extends NotificationCompat.Builder {
             nm.notify(id, notification);
         }
         return this;
+    }
+
+    public boolean isForegroundDenied() {
+        return foreground_denied;
     }
 
     public Notify hide() {

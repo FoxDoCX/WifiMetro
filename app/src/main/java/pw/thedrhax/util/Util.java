@@ -51,9 +51,18 @@ public final class Util {
         return flags | PendingIntent.FLAG_IMMUTABLE;
     }
 
-    /** Start a service; uses foreground start on Android O+. */
-    public static void startService(Context context, Intent intent) {
-        ContextCompat.startForegroundService(context, intent);
+    /**
+     * Start a service; uses foreground start on Android O+.
+     * Android 12+ throws ForegroundServiceStartNotAllowedException when called from background.
+     */
+    public static boolean startService(Context context, Intent intent) {
+        try {
+            ContextCompat.startForegroundService(context, intent);
+            return true;
+        } catch (IllegalStateException | SecurityException ex) {
+            Logger.log(Logger.LEVEL.DEBUG, ex);
+            return false;
+        }
     }
 
     /** registerReceiver with exported flag for API 33+. */

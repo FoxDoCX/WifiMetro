@@ -83,25 +83,42 @@ public class ReceiverService extends Service {
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         filter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         Util.registerReceiver(this, receiver, filter, true);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // Every startForegroundService() must be followed by startForeground(),
+        // even if the notification is hidden right after.
+        notify.show();
+
+        if (notify.isForegroundDenied()) {
+            stopSelf();
+            return START_NOT_STICKY;
+        }
 
         PermissionUtils pu = new PermissionUtils(this);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (!settings.getBoolean("pref_location_ignore_autoconnect", false)
                 && Build.VERSION.SDK_INT >= 28
-                && !pu.isCoarseLocationGranted()
-                && !pu.isFineLocationGranted()) {
+                && !pu.canReadWifiSsid()) {
+            notify.hide();
             stopSelf();
+            return START_NOT_STICKY;
         }
-    }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!ConnectionService.isRunning()) {
-            notify.show();
+        if (ConnectionService.isRunning()) {
+            notify.hide();
         }
 
         return START_STICKY;
+    }
+
+    @Override
+    public void onTimeout(int startId, int fgsType) {
+        // Android 15+: dataSync quota (6h/24h) exhausted; must stop within seconds or crash.
+        notify.hide();
+        stopSelf();
     }
 
     @Override

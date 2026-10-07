@@ -263,36 +263,32 @@ public class SettingsActivity extends Activity {
         // 3 - notifications
         // 4 - nearby Wi‑Fi (API 33+)
 
-        // Approved or rejected automatically (too fast for user)
-        boolean auto = System.currentTimeMillis() - permissionRequestTimestamp < 200;
+        if (requestCode == 3) return;
+        if (permissions.length == 0 || grantResults.length == 0) return;
+        if (pref_autoconnect == null || pref_autoconnect_service == null) return;
 
-        if (auto && (requestCode == 1 || requestCode == 2 || requestCode == 4)) {
+        boolean granted = requestCode == 2
+                ? Build.VERSION.SDK_INT >= 29 && pu.isBackgroundLocationGranted()
+                : pu.canReadWifiSsid();
+
+        // Rejected automatically (too fast for user): "Don't ask again" or OEM policy
+        boolean auto = System.currentTimeMillis() - permissionRequestTimestamp < 200;
+        if (auto && !granted && requestCode != 0) {
             openAppSettings();
         }
 
-        if (permissions.length == 0 || grantResults.length == 0) return;
-
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            switch (permissions[0]) {
-                case Manifest.permission.NEARBY_WIFI_DEVICES:
-                case Manifest.permission.ACCESS_BACKGROUND_LOCATION:
-                case Manifest.permission.ACCESS_FINE_LOCATION:
-                case Manifest.permission.ACCESS_COARSE_LOCATION:
-                    if (Build.VERSION.SDK_INT >= 29 && pu.isBackgroundLocationGranted()) {
-                        changeCheckBox(pref_autoconnect_service, false);
-                    }
-
-                    changeCheckBox(pref_autoconnect, true);
+        if (granted) {
+            if (Build.VERSION.SDK_INT >= 29 && pu.isBackgroundLocationGranted()) {
+                changeCheckBox(pref_autoconnect_service, false);
+            }
+            if (requestCode != 2) {
+                changeCheckBox(pref_autoconnect, true);
             }
         } else {
-            switch (permissions[0]) {
-                case Manifest.permission.NEARBY_WIFI_DEVICES:
-                case Manifest.permission.ACCESS_FINE_LOCATION:
-                case Manifest.permission.ACCESS_COARSE_LOCATION:
-                    changeCheckBox(pref_autoconnect, false);
-                case Manifest.permission.ACCESS_BACKGROUND_LOCATION:
-                    changeCheckBox(pref_autoconnect_service, true);
+            if (requestCode != 2) {
+                changeCheckBox(pref_autoconnect, false);
             }
+            changeCheckBox(pref_autoconnect_service, true);
         }
     }
 

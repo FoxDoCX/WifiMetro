@@ -401,6 +401,9 @@ public class ConnectionService extends IntentService {
             onStart(intent, startId);
         } else {
             Logger.log(this, "Not starting: SSID is not supported (" + SSID + ")");
+            if (!lock.isLocked() && stopSelfResult(startId)) {
+                stopForeground(true);
+            }
         }
 
         return START_NOT_STICKY;
@@ -689,6 +692,14 @@ public class ConnectionService extends IntentService {
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onTimeout(int startId, int fgsType) {
+        Logger.log(this, "onTimeout(): dataSync limit reached");
+        running.set(false);
+        stopForeground(true);
+        stopSelf();
     }
 
     @Override
