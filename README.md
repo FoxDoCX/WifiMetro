@@ -18,8 +18,10 @@
 
 | Архитектура | Файл |
 |---|---|
-| arm64 (большинство современных телефонов) | `WifiMetro-*-arm64-v8a-release.apk` |
-| armeabi-v7a (старые 32-bit) | `WifiMetro-*-armeabi-v7a-release.apk` |
+| arm64-v8a (большинство телефонов) | `WifiMetro-*-arm64-v8a-release.apk` |
+| armeabi-v7a (старые 32-bit ARM) | `WifiMetro-*-armeabi-v7a-release.apk` |
+| x86 / x86_64 (эмуляторы, редкие устройства) | `WifiMetro-*-x86*-release.apk` |
+| universal (все ABI в одном APK) | `WifiMetro-*-universal-release.apk` |
 
 > С 2.9.0 релизы подписаны **release-ключом**. Если раньше стояла debug-сборка 2.8.x — удалите её перед установкой (другая подпись).
 

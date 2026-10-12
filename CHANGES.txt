@@ -19,6 +19,9 @@ WifiMetro — полный список изменений относитель�
 Артефакты:
   dist/WifiMetro-2.9.0-FoxDoC-android16-arm64-v8a-release.apk
   dist/WifiMetro-2.9.0-FoxDoC-android16-armeabi-v7a-release.apk
+  dist/WifiMetro-2.9.0-FoxDoC-android16-x86-release.apk
+  dist/WifiMetro-2.9.0-FoxDoC-android16-x86_64-release.apk
+  dist/WifiMetro-2.9.0-FoxDoC-android16-universal-release.apk
 
 ================================================================================
 0. 2.9.0 — FGS crash, AppCompat, GitHub updates, network callback

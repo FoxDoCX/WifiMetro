@@ -44,13 +44,13 @@ android {
         multiDexEnabled true
     }
 
-    // Separate APKs: armeabi-v7a (v7) and arm64-v8a (v8)
+    // Per-ABI APKs + universal (phones, tablets, emulators)
     splits {
         abi {
             enable true
             reset()
-            include 'armeabi-v7a', 'arm64-v8a'
-            universalApk false
+            include 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            universalApk true
         }
     }
 
@@ -116,8 +116,13 @@ android {
     }
 }
 
-// Unique versionCode per ABI: v7 -> +1, v8 -> +2
-ext.abiCodes = ['armeabi-v7a': 1, 'arm64-v8a': 2]
+// Unique versionCode per ABI (Play-style): base*10 + suffix
+ext.abiCodes = [
+        'armeabi-v7a': 1,
+        'arm64-v8a'  : 2,
+        'x86'        : 3,
+        'x86_64'     : 4
+]
 android.applicationVariants.all { variant ->
     variant.outputs.each { output ->
         def abi = output.getFilter(com.android.build.OutputFile.ABI)
