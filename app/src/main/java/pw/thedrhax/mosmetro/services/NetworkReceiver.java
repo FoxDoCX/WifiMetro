@@ -21,10 +21,8 @@ package pw.thedrhax.mosmetro.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiManager;
-import android.preference.PreferenceManager;
 
 import java.util.Locale;
 
@@ -68,8 +66,7 @@ public class NetworkReceiver extends BroadcastReceiver implements Logger.Metadat
         }
 
         // Stop if automatic connection is disabled in settings
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        if (!settings.getBoolean("pref_autoconnect", true))
+        if (!AutoConnect.isEnabled(context))
             return;
 
         SupplicantState state = null;
@@ -130,6 +127,7 @@ public class NetworkReceiver extends BroadcastReceiver implements Logger.Metadat
      * Stop ConnectionService
      */
     private void stopService() {
+        if (!ConnectionService.isRunning()) return;
         Util.startService(
                 context,
                 new Intent(context, ConnectionService.class)

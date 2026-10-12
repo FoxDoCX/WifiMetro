@@ -28,7 +28,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import pw.thedrhax.mosmetro.R;
 import pw.thedrhax.mosmetro.activities.SettingsActivity;
@@ -126,11 +126,13 @@ public class ReceiverService extends Service {
         unregisterReceiver(receiver);
         unregisterReceiver(connection_receiver);
 
-        Util.startService(
-                this,
-                new Intent(this, ConnectionService.class)
-                        .setAction(ConnectionService.ACTION_STOP)
-        );
+        if (ConnectionService.isRunning() && !AutoConnect.isEnabled(this)) {
+            Util.startService(
+                    this,
+                    new Intent(this, ConnectionService.class)
+                            .setAction(ConnectionService.ACTION_STOP)
+            );
+        }
 
         super.onDestroy();
     }

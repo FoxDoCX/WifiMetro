@@ -30,7 +30,7 @@ import org.xbill.DNS.Type;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.InetAddresses;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 

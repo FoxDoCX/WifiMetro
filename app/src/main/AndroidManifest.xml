@@ -43,8 +43,6 @@
 	    <meta-data android:name="android.max_aspect" android:value="2.1" />
         <meta-data android:name="io.sentry.auto-init" android:value="false" />
 
-        <!-- Main Activities -->
-
         <activity
             android:name=".activities.DebugActivity"
             android:configChanges="orientation|screenSize"
@@ -66,10 +64,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="pw.thedrhax.mosmetro.activities.SettingsActivity.CHECK_UPDATES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity>
-
-        <!-- Utility Activities -->
 
         <activity
             android:name=".activities.ConnectionServiceActivity"
@@ -110,8 +110,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Dialogs -->
-
         <activity
             android:name=".activities.ShortcutDialog"
             android:exported="true"
@@ -138,8 +136,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Services -->
-
         <service
             android:name=".services.ReceiverService"
             android:exported="false"
@@ -151,14 +147,23 @@
         <service
             android:name=".services.WebViewService"
             android:exported="false" />
-
-        <!-- Receivers -->
+        <service
+            android:name=".services.AutoConnectTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_notification_success"
+            android:label="@string/tile_autoconnect"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".services.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
 
@@ -168,6 +173,14 @@
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE" />
                 <action android:name="android.net.wifi.supplicant.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".services.WifiNetworkReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="pw.thedrhax.mosmetro.action.WIFI_AVAILABLE" />
             </intent-filter>
         </receiver>
 
@@ -183,7 +196,17 @@
                 android:resource="@xml/toggle_widget" />
         </receiver>
 
-        <!-- Content Providers -->
+        <receiver
+            android:name=".widgets.StatusWidget"
+            android:exported="true"
+            android:label="@string/widget_status_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/status_widget" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

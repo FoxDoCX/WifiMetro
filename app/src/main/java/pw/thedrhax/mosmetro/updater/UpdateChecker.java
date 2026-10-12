@@ -18,47 +18,53 @@
 
 package pw.thedrhax.mosmetro.updater;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import com.jayway.jsonpath.DocumentContext;
 
 import java.io.File;
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
+import pw.thedrhax.mosmetro.BuildConfig;
 import pw.thedrhax.mosmetro.R;
 import pw.thedrhax.mosmetro.activities.SafeViewActivity;
+import pw.thedrhax.mosmetro.httpclient.clients.OkHttp;
 import pw.thedrhax.util.Logger;
 import pw.thedrhax.util.Util;
 import pw.thedrhax.util.Version;
 
+/**
+ * Checks GitHub Releases of {@link BuildConfig#UPDATE_REPO} for a newer signed APK.
+ */
 public class UpdateChecker {
-    // Info from the app
+    public static final String PREF_ENABLED = "pref_updater_enabled";
+    private static final String PREF_IGNORE = "pref_updater_ignore_version";
+
     private final Context context;
     private final DownloadManager dm;
     private final SharedPreferences settings;
-
-    // Updater state
-    private boolean update_failed = false;
-    private boolean check_ignored = false;
-    private boolean force_check = false;
     private long last_download = 0;
+    private boolean receiver_registered = false;
 
     public UpdateChecker(Context context) {
         this.context = context;
@@ -67,32 +73,18 @@ public class UpdateChecker {
     }
 
     private final BroadcastReceiver onComplete = new BroadcastReceiver() {
-        @SuppressLint("SetWorldReadable")
         @Override
         public void onReceive(Context context, Intent intent) {
             long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             if (id != last_download) return;
 
             Uri uri = dm.getUriForDownloadedFile(id);
+            if (uri == null) return;
 
-            Intent install = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            if (Build.VERSION.SDK_INT >= 24) {
-                install.setData(uri);
-            } else {
-                File apk = new File(context.getExternalFilesDir(null), "update.apk");
-                if (apk.exists()) apk.setReadable(true, false);
-                install.setDataAndType(uri, "application/vnd.android.package-archive");
-            }
-
-            try {
-                context.startActivity(install);
-                return;
-            } catch (ActivityNotFoundException ex) {
-                install.setAction(Intent.ACTION_VIEW);
-            }
+            Intent install = new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/vnd.android.package-archive")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             try {
                 context.startActivity(install);
@@ -107,281 +99,170 @@ public class UpdateChecker {
     public void init() {
         Util.registerReceiver(context, onComplete,
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), true);
-        Util.registerReceiver(context, onComplete,
-                new IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED), true);
+        receiver_registered = true;
     }
 
     public void deinit() {
-        context.unregisterReceiver(onComplete);
+        if (!receiver_registered) return;
+        receiver_registered = false;
+        try {
+            context.unregisterReceiver(onComplete);
+        } catch (IllegalArgumentException ignored) {}
     }
 
-    /**
-     * Force check for updates even if current last version is marked 'ignored' by user.
-     */
-    public UpdateChecker ignore(boolean skip_ignored) {
-        this.check_ignored = !skip_ignored; return this;
-    }
-
-    /**
-     * Clear branch cache before checking for updates and force update notification even if
-     * there are no updates available.
-     */
-    public UpdateChecker force(boolean force) {
-        this.force_check = force; return this;
-    }
-
-    public Result check() {
-        DocumentContext data = new BackendRequest(context).getData(force_check);
-        return check(data);
-    }
-
-    public Result check(DocumentContext data) {
-        update_failed = false;
-
-        if (data == Util.JSONPATH_EMPTY) {
-            update_failed = true;
+    /** Blocking network call. */
+    @Nullable
+    public Release check() {
+        String url = "https://api.github.com/repos/" + BuildConfig.UPDATE_REPO + "/releases/latest";
+        DocumentContext data;
+        try {
+            data = new OkHttp(context).get(url).execute().jsonpath();
+        } catch (IOException | RuntimeException ex) {
+            Logger.log(Logger.LEVEL.DEBUG, ex);
             return null;
         }
-
-        Map<String,Map<String,Object>> branches_json;
+        if (data == Util.JSONPATH_EMPTY) return null;
 
         try {
-            branches_json = data.read("$.branches");
+            String tag = data.read("$.tag_name");
+            String page = data.read("$.html_url");
+            String notes = data.read("$.body");
+            List<Map<String, Object>> assets = data.read("$.assets");
+            if (tag == null || assets == null) return null;
+
+            Map<String, Object> asset = pickAsset(assets);
+            return new Release(
+                    tag.replaceFirst("^[vV]", ""),
+                    notes != null ? notes : "",
+                    page,
+                    asset != null ? (String) asset.get("browser_download_url") : null,
+                    asset != null ? (String) asset.get("name") : null
+            );
         } catch (ClassCastException ex) {
-            update_failed = true;
+            Logger.log(Logger.LEVEL.DEBUG, ex);
             return null;
         }
-
-        if (branches_json == null) {
-            update_failed = true;
-            return null;
-        }
-
-        Branch current_branch = null;
-        Map<String, Branch> branches = new HashMap<>();
-
-        for (Map.Entry<String, Map<String, Object>> item : branches_json.entrySet()) {
-            Branch branch;
-
-            try {
-                branch = new Branch(item.getKey(), item.getValue());
-            } catch (NumberFormatException | ClassCastException ex) {
-                Logger.log(Logger.LEVEL.DEBUG, ex);
-                continue;
-            }
-
-            if (Version.getBranch().equals(branch.name)) {
-                current_branch = branch;
-            }
-
-            branches.put(branch.name, branch);
-        }
-
-        if (branches.size() == 0) {
-            update_failed = true;
-            return null;
-        }
-
-        // Check if active branch is deleted
-        if (current_branch == null && !Version.getBranch().startsWith("_")) { // Fallback to master
-            settings.edit().putInt("pref_updater_ignore", 0).apply();
-
-            if (branches.containsKey("master")) {
-                current_branch = branches.get("master");
-                current_branch.ignore(false);
-            } else {
-                update_failed = true;
-                return null;
-            }
-        }
-
-        if (current_branch == null) {
-            update_failed = true;
-            return null;
-        }
-
-        return new Result(
-            !update_failed && current_branch.hasUpdate(),
-            current_branch,
-            branches
-        );
     }
 
-    public void async_check(Callback callback) {
-        new AsyncTask<Void,Void,Result>() {
-            protected void onPreExecute() {
-                callback.onStart();
-            };
-
-            @Override @Nullable
-            protected Result doInBackground(Void... aVoid) {
-                return check();
+    /** Prefer a signed release APK for the primary ABI of this device. */
+    @Nullable
+    private static Map<String, Object> pickAsset(List<Map<String, Object>> assets) {
+        String abi = Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "";
+        Map<String, Object> fallback = null;
+        for (Map<String, Object> asset : assets) {
+            String name = String.valueOf(asset.get("name")).toLowerCase(Locale.ROOT);
+            if (!name.endsWith(".apk")) continue;
+            if (name.contains(abi.toLowerCase(Locale.ROOT))) {
+                if (!name.contains("debug")) return asset;
+                if (fallback == null) fallback = asset;
             }
+        }
+        return fallback;
+    }
 
-            @Override
-            protected void onPostExecute(@Nullable Result result) {
-                callback.onResult(result);
-            };
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    public void async_check(@NonNull Callback callback) {
+        Handler main = new Handler(Looper.getMainLooper());
+        callback.onStart();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            Release result = check();
+            main.post(() -> callback.onResult(result));
+        });
     }
 
     public interface Callback {
         void onStart();
-        void onResult(Result result);
+        void onResult(@Nullable Release result);
     }
 
-    public class Result {
-        private boolean has_update;
-        private Branch current_branch;
-        private Map<String, Branch> branches;
-
-        public Result(boolean has_update, Branch current_branch, Map<String, Branch> branches) {
-            this.has_update = has_update;
-            this.current_branch = current_branch;
-            this.branches = branches;
+    /** Compares dotted numeric versions: "2.10.0" > "2.9.1". */
+    static int compareVersions(String a, String b) {
+        String[] pa = a.split("[^0-9]+");
+        String[] pb = b.split("[^0-9]+");
+        for (int i = 0; i < Math.max(pa.length, pb.length); i++) {
+            int va = i < pa.length && !pa[i].isEmpty() ? Integer.parseInt(pa[i]) : 0;
+            int vb = i < pb.length && !pb[i].isEmpty() ? Integer.parseInt(pb[i]) : 0;
+            if (va != vb) return Integer.compare(va, vb);
         }
-
-        public boolean hasUpdate() {
-            return has_update;
-        }
-
-        public Branch getBranch() {
-            return current_branch;
-        }
-
-        public Map<String, Branch> getBranches() {
-            return branches;
-        }
-
-        public void showDialog() {
-            AlertDialog.Builder dialog;
-
-            if (hasUpdate()) {
-                dialog = current_branch.dialog_update();
-            } else {
-                dialog = new AlertDialog.Builder(context)
-                        .setTitle(context.getString(R.string.update_not_available))
-                        .setMessage(context.getString(R.string.update_not_available_message))
-                        .setNegativeButton(context.getString(R.string.ok), null);
-            }
-
-            try {
-                dialog.show();
-            } catch (Exception ignored) {}
-        }
+        return 0;
     }
 
-    public class Branch {
-        public final String name;
-        public final String message;
-        public final String description;
-        public final boolean stable;
-        public final String url;
-        public final String filename;
+    public class Release {
+        public final String version;
+        public final String notes;
+        public final String page;
+        @Nullable public final String apk_url;
+        @Nullable public final String filename;
 
-        private final int version;
-        private final boolean by_build; // Check by build number instead of version code
-
-        public Branch (String name, Map<String, Object> data) {
-            this.name = name;
-            this.by_build = (Boolean) data.get("by_build");
-            this.version = (Integer) data.get(by_build ? "build" : "version");
-            this.message = ((String) data.get("message")).replace("<br>", "");
-            this.description = (String) data.get("description");
-            this.stable = data.containsKey("stable") && (Boolean) data.get("stable");
-            this.url = (String) data.get("url");
-            this.filename = (String) data.get("filename");
+        Release(String version, String notes, String page,
+                @Nullable String apk_url, @Nullable String filename) {
+            this.version = version;
+            this.notes = notes;
+            this.page = page;
+            this.apk_url = apk_url;
+            this.filename = filename;
         }
 
-        public String id() {
-            return name + " " + version;
+        public boolean isNewer() {
+            return compareVersions(version, Version.getVersionName()) > 0;
         }
 
-        private int getVersion() {
-            if (by_build) {
-                if (Version.getBranch().equals(name)) {
-                    return Version.getBuildNumber();
-                } else {
-                    return 0;
-                }
-            } else {
-                return Version.getVersionCode();
-            }
+        public boolean isIgnored() {
+            return version.equals(settings.getString(PREF_IGNORE, ""));
         }
 
-        public boolean hasUpdate() {
-            if (settings.getInt("pref_updater_ignore", 0) < version || check_ignored)
-                if (getVersion() < version) return true;
-
-            return false;
-        }
-
-        public void ignore(boolean ignore) {
-            settings.edit().putInt("pref_updater_ignore", ignore ? version : 0).apply();
+        public void ignore() {
+            settings.edit().putString(PREF_IGNORE, version).apply();
         }
 
         public void install() {
-            Uri uri = Uri.parse(url);
+            if (apk_url == null) {
+                openPage();
+                return;
+            }
 
             File apk = new File(context.getExternalFilesDir(null), "update.apk");
             if (apk.exists()) {
                 apk.delete();
             }
 
-            DownloadManager.Request req = new DownloadManager.Request(uri)
+            DownloadManager.Request req = new DownloadManager.Request(Uri.parse(apk_url))
                     .setTitle(filename)
                     .setMimeType("application/vnd.android.package-archive")
                     .setDestinationUri(Uri.fromFile(apk))
                     .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
             last_download = dm.enqueue(req);
+            Toast.makeText(context, R.string.update_downloading, Toast.LENGTH_SHORT).show();
         }
 
-        public void download() {
-            context.startActivity(new Intent(context, SafeViewActivity.class).putExtra("data", url));
+        public void openPage() {
+            context.startActivity(new Intent(context, SafeViewActivity.class).putExtra("data", page));
         }
 
-        public AlertDialog.Builder dialog() {
-            return new AlertDialog.Builder(context)
-                    .setTitle(context.getString(R.string.update_available))
-                    .setMessage(message)
-                    .setNegativeButton(R.string.later, null)
-                    .setNeutralButton(R.string.download, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            download();
-                        }
-                    })
-                    .setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            install();
-                        }
-                    });
-        }
+        public void showDialog() {
+            AlertDialog.Builder dialog;
 
-        public AlertDialog.Builder dialog_update() {
-            return new AlertDialog.Builder(context)
-                    .setTitle(context.getString(R.string.update_available))
-                    .setMessage(message)
-                    .setPositiveButton(R.string.install, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            install();
-                        }
-                    })
-                    .setNeutralButton(R.string.download, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            download();
-                        }
-                    })
-                    .setNegativeButton(R.string.ignore_short, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ignore(true);
-                        }
-                    });
+            if (isNewer()) {
+                String message = context.getString(R.string.update_message, version, Version.getVersionName());
+                if (!notes.isEmpty()) {
+                    message += "\n\n" + notes.replaceAll("[#*`>|]", "").trim();
+                }
+                dialog = new AlertDialog.Builder(context)
+                        .setTitle(R.string.update_available)
+                        .setMessage(message)
+                        .setPositiveButton(R.string.install, (d, w) -> install())
+                        .setNeutralButton(R.string.update_open_page, (d, w) -> openPage())
+                        .setNegativeButton(R.string.ignore_short, (d, w) -> ignore());
+            } else {
+                dialog = new AlertDialog.Builder(context)
+                        .setTitle(R.string.update_not_available)
+                        .setMessage(context.getString(R.string.update_not_available_message))
+                        .setNegativeButton(R.string.ok, null);
+            }
+
+            try {
+                dialog.show();
+            } catch (RuntimeException ignored) {}
         }
     }
 }

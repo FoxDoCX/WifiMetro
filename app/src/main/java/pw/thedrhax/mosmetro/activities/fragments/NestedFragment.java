@@ -1,41 +1,36 @@
 /**
  * Wi-Fi в метро (pw.thedrhax.mosmetro, Moscow Wi-Fi autologin)
- * Copyright © 2015 Dmitry Karikh <the.dr.hax@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package pw.thedrhax.mosmetro.activities.fragments;
 
-import android.app.ActionBar;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.view.Menu;
-import android.widget.ListView;
+import android.view.MenuInflater;
+import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import pw.thedrhax.util.ThemeUtils;
 
-public class NestedFragment extends PreferenceFragment {
+public class NestedFragment extends PreferenceFragmentCompat {
     public static final String ARG_SCROLL_TO = "scrollTo";
 
     protected void setTitle(String title) {
-        ActionBar bar = getActivity().getActionBar();
-        if (bar != null)
-            bar.setTitle(title);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null) return;
+        ActionBar bar = activity.getSupportActionBar();
+        if (bar != null) bar.setTitle(title);
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // subclasses load resources
     }
 
     @Override
@@ -45,8 +40,8 @@ public class NestedFragment extends PreferenceFragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         if (getActivity() != null) {
             ThemeUtils.addToggleToMenu(getActivity(), menu);
@@ -54,16 +49,13 @@ public class NestedFragment extends PreferenceFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         Bundle args = getArguments();
-        if (args != null && args.containsKey(ARG_SCROLL_TO) && getView() != null) {
-            Preference scrollTo = findPreference(args.getString(ARG_SCROLL_TO));
-            ListView list = getView().findViewById(android.R.id.list);
-
-            if (list != null && scrollTo != null) {
-                list.post(() -> list.smoothScrollToPositionFromTop(scrollTo.getOrder(), 0));
+        if (args != null && args.containsKey(ARG_SCROLL_TO)) {
+            Preference target = findPreference(args.getString(ARG_SCROLL_TO));
+            if (target != null) {
+                scrollToPreference(target);
             }
         }
     }

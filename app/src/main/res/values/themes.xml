@@ -1,24 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppBaseTheme" parent="@android:style/Theme.DeviceDefault.Light">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/bgSecondary</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@color/colorPrimaryDark</item>
+        <item name="actionBarStyle">@style/ActionBarGreen</item>
         <item name="android:buttonStyle">@style/WifiMetroButton</item>
+        <item name="buttonStyle">@style/WifiMetroButton</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>
+        <item name="android:textColorSecondary">@color/textSecondary</item>
+        <item name="preferenceTheme">@style/WifiMetroPreferenceTheme</item>
     </style>
-    <style name="AppBaseTheme.Dialog" parent="@android:style/Theme.DeviceDefault.Light.Dialog" />
 
-    <style name="AppBaseTheme.Dark" parent="@android:style/Theme.DeviceDefault">
+    <style name="AppBaseTheme.Dark" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkDarkTheme</item>
+        <item name="colorAccent">@color/colorAccentDarkTheme</item>
         <item name="android:windowBackground">@color/bgSecondaryDarkTheme</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDarkDarkTheme</item>
+        <item name="android:navigationBarColor">@color/colorPrimaryDarkDarkTheme</item>
+        <item name="actionBarStyle">@style/ActionBarDark</item>
         <item name="android:buttonStyle">@style/WifiMetroButton</item>
+        <item name="buttonStyle">@style/WifiMetroButton</item>
         <item name="android:textColorPrimary">@color/textPrimaryDarkTheme</item>
         <item name="android:textColorSecondary">@color/textSecondaryDarkTheme</item>
-    </style>
-    <style name="AppBaseTheme.Dark.Dialog" parent="@android:style/Theme.DeviceDefault.Dialog">
-        <item name="android:windowBackground">@color/bgSurfaceDarkTheme</item>
-        <item name="android:textColorPrimary">@color/textPrimaryDarkTheme</item>
+        <item name="preferenceTheme">@style/WifiMetroPreferenceTheme</item>
     </style>
 
-    <style name="WifiMetroButton" parent="@android:style/Widget.DeviceDefault.Button">
+    <style name="AppBaseTheme.Dialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/bgPrimary</item>
+        <item name="android:buttonStyle">@style/WifiMetroButton</item>
+        <item name="buttonStyle">@style/WifiMetroButton</item>
+    </style>
+
+    <style name="AppBaseTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
+        <item name="colorAccent">@color/colorAccentDarkTheme</item>
+        <item name="android:windowBackground">@color/bgSurfaceDarkTheme</item>
+        <item name="android:textColorPrimary">@color/textPrimaryDarkTheme</item>
+        <item name="android:buttonStyle">@style/WifiMetroButton</item>
+        <item name="buttonStyle">@style/WifiMetroButton</item>
+    </style>
+
+    <style name="ActionBarGreen" parent="Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="background">@color/colorPrimary</item>
+        <item name="titleTextStyle">@style/ActionBarGreenTitle</item>
+    </style>
+
+    <style name="ActionBarDark" parent="Widget.AppCompat.ActionBar.Solid">
+        <item name="background">@color/colorPrimary</item>
+        <item name="titleTextStyle">@style/ActionBarGreenTitle</item>
+    </style>
+
+    <style name="ActionBarGreenTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textColor">@color/textOnPrimary</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- Match the old android.preference look: no reserved icon gutter -->
+    <style name="WifiMetroPreferenceTheme" parent="PreferenceThemeOverlay">
+        <item name="preferenceStyle">@style/WifiMetroPreference</item>
+        <item name="checkBoxPreferenceStyle">@style/WifiMetroPreference.CheckBox</item>
+        <item name="preferenceCategoryStyle">@style/WifiMetroPreference.Category</item>
+        <item name="editTextPreferenceStyle">@style/WifiMetroPreference.EditText</item>
+        <item name="dialogPreferenceStyle">@style/WifiMetroPreference.Dialog</item>
+        <item name="preferenceScreenStyle">@style/WifiMetroPreference.Screen</item>
+    </style>
+
+    <style name="WifiMetroPreference" parent="Preference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+    <style name="WifiMetroPreference.CheckBox" parent="Preference.CheckBoxPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+    <style name="WifiMetroPreference.Category" parent="Preference.Category.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+    <style name="WifiMetroPreference.EditText" parent="Preference.DialogPreference.EditTextPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+    <style name="WifiMetroPreference.Dialog" parent="Preference.DialogPreference.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+    <style name="WifiMetroPreference.Screen" parent="Preference.PreferenceScreen.Material">
+        <item name="iconSpaceReserved">false</item>
+    </style>
+
+    <style name="WifiMetroButton" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/bg_button_primary</item>
         <item name="android:textColor">@color/textOnPrimary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="WifiMetroButtonSecondary" parent="@style/WifiMetroButton">
+        <item name="android:background">@drawable/bg_button_secondary</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 </resources>

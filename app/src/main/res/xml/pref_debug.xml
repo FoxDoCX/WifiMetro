@@ -23,7 +23,7 @@
         android:key="pref_debug_stats"
         android:title="@string/pref_debug_stats"
         android:summary="@string/pref_debug_stats_summary"
-        android:defaultValue="true" />
+        android:defaultValue="false" />
 
     <CheckBoxPreference
         android:key="pref_debug_logcat"

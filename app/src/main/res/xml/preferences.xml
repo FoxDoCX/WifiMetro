@@ -6,29 +6,44 @@
             android:key="pref_autoconnect"
             android:title="@string/pref_autoconnect"
             android:summary="@string/pref_autoconnect_summary"
-            android:defaultValue="true" />
+            android:defaultValue="true"
+            android:iconSpaceReserved="false" />
 
         <CheckBoxPreference
             android:key="pref_autoconnect_service"
             android:title="@string/pref_autoconnect_service_title"
             android:summary="@string/pref_autoconnect_service_summary"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            android:iconSpaceReserved="false" />
 
         <Preference
             android:title="@string/manual_connection"
-            android:summary="@string/manual_connection_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.DebugActivity" />
+            android:summary="@string/manual_connection_summary"
+            android:iconSpaceReserved="false">
+            <intent android:action="pw.thedrhax.mosmetro.activities.DebugActivity"
+                android:targetPackage="pw.thedrhax.mosmetro"
+                android:targetClass="pw.thedrhax.mosmetro.activities.DebugActivity" />
         </Preference>
 
         <Preference
             android:key="pref_networks"
             android:title="@string/pref_networks"
-            android:summary="@string/pref_networks_summary" />
+            android:summary="@string/pref_networks_summary"
+            android:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_history"
+            android:title="@string/pref_history"
+            android:summary="@string/pref_history_summary"
+            android:iconSpaceReserved="false" />
 
         <Preference
             android:title="@string/view_log"
-            android:summary="@string/view_log_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.DebugActivity">
+            android:summary="@string/view_log_summary"
+            android:iconSpaceReserved="false">
+            <intent android:action="pw.thedrhax.mosmetro.activities.DebugActivity"
+                android:targetPackage="pw.thedrhax.mosmetro"
+                android:targetClass="pw.thedrhax.mosmetro.activities.DebugActivity">
                 <extra android:name="view_only" android:value="true" />
             </intent>
         </Preference>
@@ -36,8 +51,11 @@
         <Preference
             android:key="pref_shortcut"
             android:title="@string/manual_connection_shortcut"
-            android:summary="@string/manual_connection_shortcut_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.ShortcutActivity" />
+            android:summary="@string/manual_connection_shortcut_summary"
+            android:iconSpaceReserved="false">
+            <intent android:action="pw.thedrhax.mosmetro.activities.ShortcutActivity"
+                android:targetPackage="pw.thedrhax.mosmetro"
+                android:targetClass="pw.thedrhax.mosmetro.activities.ShortcutDialog" />
         </Preference>
     </PreferenceCategory>
 
@@ -48,17 +66,39 @@
         <Preference
             android:key="pref_conn"
             android:title="@string/pref_category_connection"
-            android:summary="@string/pref_category_connection_summary" />
+            android:summary="@string/pref_category_connection_summary"
+            android:iconSpaceReserved="false" />
 
         <Preference
             android:key="pref_notify"
             android:title="@string/pref_category_notifications"
-            android:summary="@string/pref_category_notifications_summary" />
+            android:summary="@string/pref_category_notifications_summary"
+            android:iconSpaceReserved="false" />
 
         <Preference
             android:key="pref_debug"
             android:title="@string/pref_debug"
-            android:summary="@string/pref_debug_summary" />
+            android:summary="@string/pref_debug_summary"
+            android:iconSpaceReserved="false" />
+
+        <CheckBoxPreference
+            android:key="pref_updater_enabled"
+            android:title="@string/pref_updater_enabled"
+            android:summary="@string/pref_updater_enabled_summary"
+            android:defaultValue="true"
+            android:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_updater_check"
+            android:title="@string/pref_updater_check"
+            android:summary="@string/pref_updater_check_summary"
+            android:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_oem_autostart"
+            android:title="@string/pref_oem_autostart"
+            android:summary="@string/pref_oem_autostart_summary"
+            android:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about">
@@ -66,11 +106,13 @@
             android:key="app_name"
             android:icon="@drawable/ic_launcher"
             android:title="@string/app_name"
-            android:summary="@string/app_tagline" />
+            android:summary="@string/app_tagline"
+            android:iconSpaceReserved="true" />
 
         <Preference
             android:key="pref_about"
             android:title="@string/more_information"
-            android:summary="@string/more_information_summary" />
+            android:summary="@string/more_information_summary"
+            android:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

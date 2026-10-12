@@ -18,7 +18,7 @@
 
 package pw.thedrhax.mosmetro.activities;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -34,7 +34,7 @@ import io.sentry.UserFeedback;
 import io.sentry.protocol.SentryId;
 import pw.thedrhax.mosmetro.R;
 
-public class FeedbackActivity extends Activity {
+public class FeedbackActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ThemeUtils.apply(this);

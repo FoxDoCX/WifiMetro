@@ -3,6 +3,12 @@ plugins {
     id 'androidsvgdrawable'
 }
 
+def localProps = new Properties()
+def localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { localProps.load(it) }
+}
+
 android {
     namespace 'pw.thedrhax.mosmetro'
     // Android 16 (API 36)
@@ -12,8 +18,8 @@ android {
         applicationId 'pw.thedrhax.mosmetro'
         minSdkVersion 26
         targetSdkVersion 36
-        versionCode 88
-        versionName "2.8.4"
+        versionCode 90
+        versionName "2.9.0"
 
         // Build author / branch signature
         def branch_name = System.getenv("BRANCH_NAME") ?: "FoxDoC"
@@ -25,6 +31,14 @@ android {
 
         buildConfigField "String", "API_URL_DATA", "\"https://raw.githubusercontent.com/mosmetro-android/builds/data/data.json\""
         buildConfigField "String", "API_URL_STATS", "\"https://mosmetro.duckdns.org/api/v3/stats\""
+
+        // Releases of this fork are checked for updates
+        def update_repo = findProperty("UPDATE_REPO") ?: "FoxDoCX/WifiMetro"
+        buildConfigField "String", "UPDATE_REPO", "\"$update_repo\""
+
+        // Crash reports: empty DSN disables Sentry entirely
+        def sentry_dsn = System.getenv("SENTRY_DSN") ?: (localProps.getProperty("SENTRY_DSN") ?: "")
+        buildConfigField "String", "SENTRY_DSN", "\"$sentry_dsn\""
 
         // Required when setting minSdkVersion to 20 or lower
         multiDexEnabled true
@@ -68,9 +82,9 @@ android {
             debuggable true
         }
         release {
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release
@@ -115,6 +129,8 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.work:work-runtime:2.10.4'
     implementation 'androidx.multidex:multidex:2.0.1'

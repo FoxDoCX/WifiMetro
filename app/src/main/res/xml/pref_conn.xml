@@ -58,7 +58,7 @@
         android:summary="@string/pref_internet_check_summary"
         android:title="@string/pref_internet_check" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:defaultValue="10"
         android:inputType="number"
         android:key="pref_internet_check_interval"
@@ -93,35 +93,35 @@
         android:title="@string/pref_dnsjava"
         android:summary="@string/pref_dnsjava_summary" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:defaultValue="3"
         android:inputType="number"
         android:key="pref_retry_count"
         android:summary="@string/pref_retry_count_summary"
         android:title="@string/pref_retry_count" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:defaultValue="5"
         android:inputType="number"
         android:key="pref_retry_delay"
         android:summary="@string/pref_retry_delay_summary"
         android:title="@string/pref_retry_delay" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:defaultValue="0"
         android:inputType="number"
         android:key="pref_ip_wait"
         android:summary="@string/pref_ip_wait_summary"
         android:title="@string/pref_ip_wait" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:defaultValue="5"
         android:inputType="number"
         android:key="pref_timeout"
         android:summary="@string/pref_timeout_summary"
         android:title="@string/pref_timeout" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:defaultValue="unset"
         android:key="pref_user_agent"
         android:title="@string/pref_user_agent"

@@ -25,7 +25,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import com.jayway.jsonpath.DocumentContext;
 
@@ -105,36 +105,33 @@ public class BackendRequest {
         return true;
     }
 
-    private void checkUpdates(DocumentContext data) {
-        UpdateChecker.Result result = new UpdateChecker(context).check(data);
+    private void checkUpdates() {
+        UpdateChecker.Release release = new UpdateChecker(context).check();
 
-        if (result == null)
+        if (release == null || !release.isNewer() || release.isIgnored())
             return;
 
-        if (!result.hasUpdate() || result.getBranch() == null)
+        // Show notification only once for each version
+        if (settings.getString("pref_updater_ignore_notification", "").equals(release.version))
             return;
 
-        UpdateChecker.Branch branch = result.getBranch();
+        settings.edit().putString("pref_updater_ignore_notification", release.version).apply();
 
-        // Show notification only once for each build
-        if (settings.getString("pref_updater_ignore_notification", "").equals(branch.id()))
-            return;
-
-        settings.edit().putString("pref_updater_ignore_notification", branch.id()).apply();
-
-        Notify notify = new Notify(context)
+        new Notify(context)
+                .channel(Notify.CHANNEL_UPDATES)
                 .id(3)
                 .title(context.getString(R.string.update_available))
-                .text(branch.message)
-                .icon(R.drawable.ic_notification_message,
-                        R.drawable.ic_notification_message_colored)
+                .text(context.getString(R.string.update_message, release.version,
+                        pw.thedrhax.util.Version.getVersionName()))
+                .icon(R.drawable.ic_notification_message_colored,
+                        R.drawable.ic_notification_message)
                 .cancelOnClick(true)
                 .onClick(PendingIntent.getActivity(
                         context, 252,
-                        new Intent(context, SettingsActivity.class),
-                        Util.pendingFlags(PendingIntent.FLAG_UPDATE_CURRENT)));
-
-        notify.show();
+                        new Intent(context, SettingsActivity.class)
+                                .setAction(SettingsActivity.ACTION_CHECK_UPDATES),
+                        Util.pendingFlags(PendingIntent.FLAG_UPDATE_CURRENT)))
+                .show();
     }
 
     public DocumentContext getCachedData(boolean force) {
@@ -218,9 +215,20 @@ public class BackendRequest {
     }
 
     public boolean run() {
+        if (settings.getBoolean(UpdateChecker.PREF_ENABLED, true)) {
+            checkUpdates();
+        }
+
+        // Upstream backend (news, provider stats) — opt-in only
+        boolean stats = settings.getBoolean("pref_debug_stats", false);
+        boolean news = settings.getBoolean("pref_notify_news", false);
+        if (!stats && !news) {
+            return true;
+        }
+
         DocumentContext data = getData(false);
 
-        if (settings.getBoolean("pref_debug_stats", true)) {
+        if (stats) {
             sendMetrics();
         }
 
@@ -228,13 +236,8 @@ public class BackendRequest {
             return false;
         }
 
-        if (settings.getBoolean("pref_notify_news", false)) {
+        if (news) {
             checkNews(data);
-        }
-
-        // WifiMetro: updates are disabled
-        if (false && settings.getBoolean("pref_updater_enabled", false)) {
-            checkUpdates(data);
         }
 
         return true;

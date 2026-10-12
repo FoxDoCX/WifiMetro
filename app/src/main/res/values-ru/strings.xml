@@ -286,4 +286,37 @@
     <string name="pref_debug_stats_summary">Приложение будет собирать анонимную статистику о подключениях. Кроме внутренних метрик (версия, алгоритм и т.д.), в отчёты включаются название сети Wi-Fi и версия Android.</string>
     <string name="pref_byfly_summary">Этот алгоритм используется для подключения к \"BELTELECOM\" и \"byfly WIFI\" — платным сетям Wi-Fi в Беларуси.</string>
     <string name="pref_byfly">ByFly (Белтелеком)</string>
+
+    <!-- 2.9.0 -->
+    <string name="channel_service">Фоновый сервис</string>
+    <string name="channel_service_summary">Постоянное уведомление при ожидании Wi‑Fi или входе</string>
+    <string name="channel_result">Результаты входа</string>
+    <string name="channel_result_summary">Успех, ошибки и запросы регистрации</string>
+    <string name="channel_updates">Обновления</string>
+    <string name="channel_updates_summary">Новые релизы WifiMetro</string>
+    <string name="update_message" formatted="false">Доступна версия %1$s (у вас %2$s)</string>
+    <string name="update_downloading">Скачивание обновления…</string>
+    <string name="update_open_page">Открыть страницу</string>
+    <string name="notification_tap_to_connect">Доступен Wi‑Fi</string>
+    <string name="notification_tap_to_connect_summary">Нажмите, чтобы запустить вход WifiMetro</string>
+    <string name="about_source">Исходный код</string>
+    <string name="pref_history">История подключений</string>
+    <string name="pref_history_summary">Последние попытки входа и результаты</string>
+    <string name="pref_history_empty">Пока нет подключений</string>
+    <string name="pref_history_clear">Очистить историю</string>
+    <string name="pref_history_export">Экспорт CSV</string>
+    <string name="pref_history_item" formatted="false">%1$s · %2$s · %3$s</string>
+    <string name="pref_ssid_custom">Свои SSID</string>
+    <string name="pref_ssid_custom_summary">По одному имени сети в строке. Считаются поддерживаемыми для автологина.</string>
+    <string name="pref_ssid_disabled_summary">Не выполнять автологин в этой сети</string>
+    <string name="pref_ssid_enable">Включить автологин</string>
+    <string name="pref_ssid_disable">Отключить автологин</string>
+    <string name="tile_autoconnect">WifiMetro автологин</string>
+    <string name="widget_status_label">Статус WifiMetro</string>
+    <string name="widget_status_idle">Нет недавних входов</string>
+    <string name="widget_status_ok" formatted="false">OK · %1$s</string>
+    <string name="widget_status_fail" formatted="false">Ошибка · %1$s</string>
+    <string name="pref_oem_autostart">Автозапуск (Xiaomi / HyperOS)</string>
+    <string name="pref_oem_autostart_summary">Откройте настройки производителя, чтобы WifiMetro мог стартовать после перезагрузки</string>
+    <string name="captive_fix_adb">Без root? Один раз с ПК:\nadb shell pm grant pw.thedrhax.mosmetro android.permission.WRITE_SECURE_SETTINGS</string>
 </resources>

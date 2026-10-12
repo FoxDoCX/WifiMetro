@@ -18,8 +18,10 @@
 
 package pw.thedrhax.util;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 
@@ -87,26 +89,61 @@ public class CaptivePortalFix {
         }
     }
 
-    public void apply(Shell.ResultCallback result) {
+    public interface Callback {
+        void onResult(boolean success);
+    }
+
+    /** One-time grant: adb shell pm grant pw.thedrhax.mosmetro android.permission.WRITE_SECURE_SETTINGS */
+    public boolean hasSecureSettingsAccess() {
+        return context.checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void apply(Callback callback) {
         String url = (String) random.choose(Gen204.URL_RELIABLE);
         String domain = url.split("/")[0];
+
+        if (hasSecureSettingsAccess()) {
+            ContentResolver resolver = context.getContentResolver();
+            callback.onResult(putGlobal(resolver, CAPTIVE_PORTAL_SERVER, domain)
+                    && putGlobal(resolver, CAPTIVE_PORTAL_HTTP_URL, "http://" + url)
+                    && putGlobal(resolver, CAPTIVE_PORTAL_HTTPS_URL, "https://" + url));
+            return;
+        }
 
         Shell.sh(
                 "settings put global " + CAPTIVE_PORTAL_SERVER + " " + domain + " && " +
                 "settings put global " + CAPTIVE_PORTAL_HTTP_URL + " http://" + url + " && " +
                 "settings put global " + CAPTIVE_PORTAL_HTTPS_URL + " https://" + url
-        ).to(SHELL_LOG).submit(result);
+        ).to(SHELL_LOG).submit(result -> callback.onResult(result.isSuccess()));
     }
 
-    public void revert(Shell.ResultCallback result) {
+    public void revert(Callback callback) {
+        if (hasSecureSettingsAccess()) {
+            ContentResolver resolver = context.getContentResolver();
+            callback.onResult(putGlobal(resolver, CAPTIVE_PORTAL_SERVER, null)
+                    && putGlobal(resolver, CAPTIVE_PORTAL_HTTP_URL, null)
+                    && putGlobal(resolver, CAPTIVE_PORTAL_HTTPS_URL, null));
+            return;
+        }
+
         Shell.sh(
                 "settings delete global " + CAPTIVE_PORTAL_SERVER + " && " +
                 "settings delete global " + CAPTIVE_PORTAL_HTTP_URL + " && " +
                 "settings delete global " + CAPTIVE_PORTAL_HTTPS_URL
-        ).to(SHELL_LOG).submit(result);
+        ).to(SHELL_LOG).submit(result -> callback.onResult(result.isSuccess()));
     }
 
-    public void toggle(Shell.ResultCallback result) {
+    private static boolean putGlobal(ContentResolver resolver, String key, String value) {
+        try {
+            return Settings.Global.putString(resolver, key, value);
+        } catch (SecurityException ex) {
+            Logger.log(Logger.LEVEL.DEBUG, ex);
+            return false;
+        }
+    }
+
+    public void toggle(Callback result) {
         if (isApplied()) {
             revert(result);
         } else {

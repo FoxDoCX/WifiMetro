@@ -19,16 +19,18 @@
 package pw.thedrhax.mosmetro;
 
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import androidx.multidex.MultiDexApplication;
+import androidx.preference.PreferenceManager;
 
 import io.sentry.Attachment;
 import io.sentry.Sentry;
 import io.sentry.android.core.SentryAndroid;
 import io.sentry.protocol.User;
+import pw.thedrhax.mosmetro.services.AutoConnect;
 import pw.thedrhax.mosmetro.services.BackendWorker;
 import pw.thedrhax.util.Logger;
+import pw.thedrhax.util.Notify;
 import pw.thedrhax.util.UUID;
 import pw.thedrhax.util.Version;
 
@@ -56,6 +58,12 @@ public class MosMetroApp extends MultiDexApplication {
         }
 
         try {
+            Notify.createChannels(this);
+        } catch (Throwable ex) {
+            Logger.log(Logger.LEVEL.DEBUG, String.valueOf(ex));
+        }
+
+        try {
             BackendWorker.configure(this);
         } catch (Throwable ex) {
             Logger.log(Logger.LEVEL.DEBUG, String.valueOf(ex));
@@ -66,13 +74,26 @@ public class MosMetroApp extends MultiDexApplication {
         } catch (Throwable ex) {
             Logger.log(Logger.LEVEL.DEBUG, String.valueOf(ex));
         }
+
+        try {
+            AutoConnect.ensure(this);
+        } catch (Throwable ex) {
+            Logger.log(Logger.LEVEL.DEBUG, String.valueOf(ex));
+        }
+    }
+
+    public static boolean isCrashReportingAvailable() {
+        return !BuildConfig.SENTRY_DSN.isEmpty();
     }
 
     private void initSentry() {
+        // No DSN configured for this build: keep Sentry completely off
+        if (!isCrashReportingAvailable()) return;
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         SentryAndroid.init(this, options -> {
-            options.setDsn("https://13509f0e75f74081845cfe990b9840f3@o1176364.ingest.sentry.io/4504074406199296");
+            options.setDsn(BuildConfig.SENTRY_DSN);
             options.setEnableAutoSessionTracking(false);
             options.setRelease(Version.getFormattedVersion());
             options.setTag("branch", Version.getBranch());

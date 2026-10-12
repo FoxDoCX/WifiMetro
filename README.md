@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| **Версия** | 2.8.4 (versionCode 88) |
+| **Версия** | 2.9.0 (versionCode 90) |
 | **Package** | `pw.thedrhax.mosmetro` |
 | **minSdk** | 26 (Android 8.0) |
 | **targetSdk** | 36 (Android 16) |
@@ -18,20 +18,23 @@
 
 | Архитектура | Файл |
 |---|---|
-| arm64 (большинство современных телефонов) | `WifiMetro-*-arm64-v8a-*.apk` |
-| armeabi-v7a (старые 32-bit) | `WifiMetro-*-armeabi-v7a-*.apk` |
+| arm64 (большинство современных телефонов) | `WifiMetro-*-arm64-v8a-release.apk` |
+| armeabi-v7a (старые 32-bit) | `WifiMetro-*-armeabi-v7a-release.apk` |
 
-> Текущие сборки в Releases — **debug** (подписаны debug-ключом). Для release-сборки нужен локальный `keystore.properties`.
+> С 2.9.0 релизы подписаны **release-ключом**. Если раньше стояла debug-сборка 2.8.x — удалите её перед установкой (другая подпись).
 
 После установки запустите приложение один раз — оно будет отслеживать Wi‑Fi и подключаться к знакомым SSID автоматически.
 
-## Возможности (FoxDoC 2.8.x)
+## Возможности (FoxDoC 2.9.x)
 
 - Автологин в сетях MT_FREE, Moscow_WiFi_Free, MTS_WiFi_Free, Aeroexpress_Free, CPPK_Free, BELTELECOM и др.
-- **Меню «Wi‑Fi сети»** — ручной выбор SSID и принудительное подключение
-- **Тёмная тема** — переключатель в ActionBar (настройки, отладка, обратная связь)
-- Корректные отступы под статус-бар и навигацию (3-кнопочная и жестовая)
-- Совместимость с Android 12–16 (FGS, exported-компоненты, edge-to-edge)
+- Автозапуск через system network callback (без обязательного постоянного сервиса)
+- **Меню «Wi‑Fi сети»** — ручной выбор, свои SSID, отключение отдельных сетей
+- История подключений + экспорт CSV
+- Плитка Quick Settings и виджет статуса
+- Обновления с GitHub Releases этого репозитория
+- Тёмная тема, AppCompat / androidx.preference
+- Совместимость с Android 12–16 (FGS, dataSync timeout, exported-компоненты)
 
 Полный changelog: [CHANGES.txt](./CHANGES.txt)
 

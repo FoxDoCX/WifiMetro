@@ -18,17 +18,20 @@
 
 package pw.thedrhax.mosmetro.services;
 
-import android.app.IntentService;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import androidx.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
@@ -36,9 +39,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import java.net.NetworkInterface;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 
 import pw.thedrhax.mosmetro.R;
@@ -48,7 +53,9 @@ import pw.thedrhax.mosmetro.activities.SettingsActivity;
 import pw.thedrhax.mosmetro.authenticator.Gen204;
 import pw.thedrhax.mosmetro.authenticator.Provider;
 import pw.thedrhax.mosmetro.authenticator.Gen204.Gen204Result;
+import pw.thedrhax.mosmetro.widgets.StatusWidget;
 import pw.thedrhax.util.CaptivePortalFix;
+import pw.thedrhax.util.ConnectionHistory;
 import pw.thedrhax.util.Listener;
 import pw.thedrhax.util.Logger;
 import pw.thedrhax.util.Notify;
@@ -57,7 +64,7 @@ import pw.thedrhax.util.Util;
 import pw.thedrhax.util.Version;
 import pw.thedrhax.util.WifiUtils;
 
-public class ConnectionService extends IntentService {
+public class ConnectionService extends Service {
     public static final String ACTION_EVENT = "pw.thedrhax.mosmetro.event.ConnectionService";
     public static final String ACTION_STOP = "STOP";
     public static final String ACTION_EVENT_CONNECTED = "pw.thedrhax.mosmetro.event.CONNECTED";
@@ -78,7 +85,14 @@ public class ConnectionService extends IntentService {
     private boolean from_shortcut = false;
     private boolean from_debug = false;
 
+    // Runs authentication attempts one by one (replacement for deprecated IntentService)
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler main_handler = new Handler(Looper.getMainLooper());
+    private int pending_tasks = 0; // main thread only
+    private ConnectionHistory history;
+
     private ConnectivityManager.NetworkCallback networkCallback = null;
+    private ConnectivityManager.NetworkCallback wifiCallback = null;
     private Listener<Boolean> isWifi = new Listener<Boolean>(false) {
         @Override
         public void onChange(Boolean new_value) {
@@ -100,14 +114,13 @@ public class ConnectionService extends IntentService {
 
     // Notifications
     private Notify notify;
-
-    public ConnectionService () {
-		super("ConnectionService");
-	}
+    private PendingIntent debug_intent;
 
     @Override
     public void onCreate() {
 		super.onCreate();
+
+        history = new ConnectionHistory(this);
 
         wifi = new WifiUtils(this) {
             @Override
@@ -147,12 +160,11 @@ public class ConnectionService extends IntentService {
 
         Intent debug = new Intent(this, DebugActivity.class);
         debug.putExtra(DebugActivity.INTENT_VIEW_ONLY, true);
+        debug_intent = PendingIntent.getActivity(this, 1, debug,
+                Util.pendingFlags(PendingIntent.FLAG_UPDATE_CURRENT));
 
         notify.id(1)
-                .onClick(PendingIntent.getActivity(
-                        this, 1, debug,
-                        Util.pendingFlags(PendingIntent.FLAG_UPDATE_CURRENT)
-                ))
+                .onClick(debug_intent)
                 .onDelete(stop_intent)
                 .icon(R.drawable.ic_notification_connecting_colored,
                         R.drawable.ic_notification_connecting)
@@ -180,6 +192,65 @@ public class ConnectionService extends IntentService {
                 Logger.log(Logger.LEVEL.DEBUG, "Warning: Unable to register network callback");
             }
         }
+
+        // Stop when Wi-Fi goes away (replaces DISCONNECTED handling of NetworkReceiver)
+        wifiCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onLost(@NonNull Network network) {
+                if (running.get() && wifi.getNetwork(ConnectivityManager.TYPE_WIFI) == null) {
+                    Logger.log(ConnectionService.this, "Wi-Fi network lost, stopping");
+                    running.set(false);
+                }
+            }
+        };
+        try {
+            wifi.getConnectivityManager().registerNetworkCallback(
+                    new NetworkRequest.Builder()
+                            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                            .removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
+                            .build(),
+                    wifiCallback);
+        } catch (RuntimeException ex) {
+            wifiCallback = null;
+            Logger.log(Logger.LEVEL.DEBUG, ex);
+        }
+    }
+
+    /** Queue an authentication run on the worker thread. Main thread only. */
+    private void enqueue(final Intent intent) {
+        pending_tasks++;
+        executor.execute(() -> {
+            Intent next = null;
+            try {
+                next = handleIntent(intent);
+            } catch (RuntimeException ex) {
+                Logger.log(Logger.LEVEL.DEBUG, ex);
+            } finally {
+                final Intent restart = next;
+                main_handler.post(() -> {
+                    pending_tasks--;
+                    if (restart != null) {
+                        Logger.log(this, "Starting queued force/debug run");
+                        onStartCommand(restart, 0, 0);
+                    } else {
+                        stopIfIdle();
+                    }
+                });
+            }
+        });
+    }
+
+    /** Leave foreground and stop once nothing is queued or running. Main thread only. */
+    private void stopIfIdle() {
+        if (pending_tasks > 0 || lock.isLocked()) return;
+        stopForeground(STOP_FOREGROUND_REMOVE);
+        stopSelf();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private void notify (Provider.RESULT result) {
@@ -201,10 +272,11 @@ public class ConnectionService extends IntentService {
                 }
 
                 if (from_shortcut && !pref_manual_connection_monitoring) {
-                    // TODO: Auto cancel this notification after 30 seconds
                     notify.id(2) // protect this notification from removing
+                            .channel(Notify.CHANNEL_RESULT)
                             .cancelOnClick(true)
-                            .locked(false);
+                            .setTimeoutAfter(30 * 1000);
+                    notify.locked(false);
                 }
 
                 notify.title(getString(R.string.notification_success))
@@ -224,6 +296,7 @@ public class ConnectionService extends IntentService {
                                 new Intent(this, SafeViewActivity.class)
                                         .putExtra("data", "http://wi-fi.ru"),
                                 Util.pendingFlags(PendingIntent.FLAG_UPDATE_CURRENT)))
+                        .channel(Notify.CHANNEL_RESULT)
                         .id(2).locked(false).show();
                 break;
 
@@ -234,6 +307,7 @@ public class ConnectionService extends IntentService {
                         .icon(R.drawable.ic_notification_error_colored,
                               R.drawable.ic_notification_error)
                         .enabled(!from_debug && settings.getBoolean("pref_notify_fail", false))
+                        .channel(Notify.CHANNEL_RESULT)
                         .id(2).locked(false).show();
                 break;
 
@@ -244,6 +318,7 @@ public class ConnectionService extends IntentService {
                         .icon(R.drawable.ic_notification_register_colored,
                               R.drawable.ic_notification_register)
                         .enabled(!from_debug && settings.getBoolean("pref_notify_fail", false))
+                        .channel(Notify.CHANNEL_RESULT)
                         .id(2).locked(false).show();
                 break;
 
@@ -252,10 +327,14 @@ public class ConnectionService extends IntentService {
                 break;
         }
 
-        notify // return to defaults
-                .id(1)
+        // Return to defaults: a disabled builder would skip startForeground() on the next start
+        notify.id(1)
+                .enabled(true)
+                .channel(Notify.CHANNEL_ID)
+                .onClick(debug_intent)
                 .cancelOnClick(false)
-                .locked(pref_notify_foreground);
+                .setTimeoutAfter(0);
+        notify.locked(pref_notify_foreground);
     }
 
     private boolean waitForIP(boolean silent) {
@@ -334,8 +413,7 @@ public class ConnectionService extends IntentService {
                 Logger.log(this, "Stopping by Intent");
                 running.set(false);
             } else if (!running.get()) {
-                stopForeground(true);
-                stopSelf();
+                stopIfIdle();
             }
             return START_NOT_STICKY;
         }
@@ -395,24 +473,27 @@ public class ConnectionService extends IntentService {
             }
         }
 
-        if (Provider.isSSIDSupported(SSID) || from_shortcut ||
+        if (!from_shortcut && Provider.isSSIDDisabled(this, SSID)) {
+            Logger.log(this, "Not starting: SSID is disabled by user (" + SSID + ")");
+            stopIfIdle();
+        } else if (Provider.isSSIDSupported(this, SSID) || from_shortcut ||
                 WifiUtils.UNKNOWN_SSID.equals(SSID) || pref_wifi_any_ssid) {
             Logger.log(this, source);
-            onStart(intent, startId);
+            enqueue(intent);
         } else {
             Logger.log(this, "Not starting: SSID is not supported (" + SSID + ")");
-            if (!lock.isLocked() && stopSelfResult(startId)) {
-                stopForeground(true);
-            }
+            stopIfIdle();
         }
 
         return START_NOT_STICKY;
     }
 
-    public void onHandleIntent(Intent intent) {
+    /** @return queued force/debug restart, if any */
+    @Nullable
+    private Intent handleIntent(Intent intent) {
         if (lock.tryLock()) {
             Logger.log(this, "Broadcast | ConnectionService (RUNNING = true)");
-            sendBroadcast(new Intent(ACTION_EVENT).putExtra(EXTRA_RUNNING, true));
+            sendEvent(new Intent(ACTION_EVENT).putExtra(EXTRA_RUNNING, true));
 
             Logger.date(">>> ");
             Logger.log(getString(R.string.version, Version.getFormattedVersion()));
@@ -431,25 +512,28 @@ public class ConnectionService extends IntentService {
             }
             lock.unlock();
 
-            notify.hide();
-
-            Logger.log(this, "Broadcast | ConnectionService (RUNNING = false)");
-            sendBroadcast(new Intent(ACTION_EVENT).putExtra(EXTRA_RUNNING, false));
-
-            Logger.date("<<< ");
-
             Intent next;
             synchronized (pendingLock) {
                 next = pendingRestart;
                 pendingRestart = null;
             }
-            if (next != null) {
-                Logger.log(this, "Starting queued force/debug run");
-                Util.startService(this, next);
-            }
+
+            // Keep foreground for a queued restart: re-entering it from background may be denied
+            if (next == null) notify.hide();
+
+            Logger.log(this, "Broadcast | ConnectionService (RUNNING = false)");
+            sendEvent(new Intent(ACTION_EVENT).putExtra(EXTRA_RUNNING, false));
+
+            Logger.date("<<< ");
+            return next;
         } else {
             Logger.log(this, "Already running");
+            return null;
         }
+    }
+
+    private void sendEvent(Intent intent) {
+        sendBroadcast(intent.setPackage(getPackageName()));
     }
 
     private boolean ignore_midsession = false;
@@ -572,7 +656,7 @@ public class ConnectionService extends IntentService {
 
         new Notify(this).id(2).hide(); // hide error notification
 
-        boolean unknownNetwork = !from_shortcut && !Provider.isSSIDSupported(SSID);
+        boolean unknownNetwork = !from_shortcut && !Provider.isSSIDSupported(this, SSID);
 
         // Wait for IP before detecting the Provider
         if (!waitForIP(unknownNetwork)) {
@@ -621,11 +705,17 @@ public class ConnectionService extends IntentService {
 
         // Try to connect
         Logger.log(getString(R.string.algorithm_name, provider.getName()));
+        long started = System.currentTimeMillis();
         Provider.RESULT result = connect(provider);
 
         // Notify user if not interrupted
         if (running.get()) {
             notify(result);
+            if (result != Provider.RESULT.RESTART) {
+                history.add(SSID, provider.getName(), result.name(),
+                        System.currentTimeMillis() - started);
+                StatusWidget.updateAll(this);
+            }
         } else {
             return;
         }
@@ -655,7 +745,7 @@ public class ConnectionService extends IntentService {
         }
 
         Logger.log(this, "Broadcast | CONNECTED");
-        sendBroadcast(new Intent(ACTION_EVENT_CONNECTED)
+        sendEvent(new Intent(ACTION_EVENT_CONNECTED)
                 .putExtra("SSID", SSID)
                 .putExtra("PROVIDER", provider.getName())
         );
@@ -670,8 +760,10 @@ public class ConnectionService extends IntentService {
         }
 
         Logger.log(this, "Broadcast | DISCONNECTED");
-        sendBroadcast(new Intent(ACTION_EVENT_DISCONNECTED));
-        notify.hide();
+        sendEvent(new Intent(ACTION_EVENT_DISCONNECTED));
+        // Still running means a reconnect attempt follows: stay foreground, the next
+        // iteration updates the notification (re-entering foreground from background may fail)
+        if (!running.get()) notify.hide();
 
         // Try to reconnect the Wi-Fi network
         if (settings.getBoolean("pref_wifi_reconnect", false) && Build.VERSION.SDK_INT < 29) {
@@ -687,10 +779,17 @@ public class ConnectionService extends IntentService {
 
     @Override
     public void onDestroy() {
-        if (Build.VERSION.SDK_INT >= 21 && networkCallback != null) {
-            wifi.getConnectivityManager().unregisterNetworkCallback(networkCallback);
+        ConnectivityManager cm = wifi.getConnectivityManager();
+        for (ConnectivityManager.NetworkCallback callback
+                : new ConnectivityManager.NetworkCallback[] {networkCallback, wifiCallback}) {
+            if (callback == null) continue;
+            try {
+                cm.unregisterNetworkCallback(callback);
+            } catch (RuntimeException ignored) {}
         }
 
+        running.set(false);
+        executor.shutdown();
         super.onDestroy();
     }
 
@@ -698,7 +797,7 @@ public class ConnectionService extends IntentService {
     public void onTimeout(int startId, int fgsType) {
         Logger.log(this, "onTimeout(): dataSync limit reached");
         running.set(false);
-        stopForeground(true);
+        stopForeground(STOP_FOREGROUND_REMOVE);
         stopSelf();
     }
 

@@ -21,19 +21,15 @@ package pw.thedrhax.mosmetro.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
-import pw.thedrhax.util.Util;
-
+/**
+ * Network callbacks do not survive reboot / app update: register them again.
+ * Android 15+ forbids dataSync FGS from BOOT_COMPLETED; the persistent service then
+ * stops itself and the PendingIntent callback keeps working.
+ */
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-
-        if (settings.getBoolean("pref_autoconnect", true)
-                && settings.getBoolean("pref_autoconnect_service", false)) {
-            Util.startService(context, new Intent(context, ReceiverService.class));
-        }
+        AutoConnect.ensure(context);
     }
 }

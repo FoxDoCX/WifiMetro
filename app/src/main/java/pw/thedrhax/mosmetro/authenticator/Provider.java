@@ -20,7 +20,7 @@ package pw.thedrhax.mosmetro.authenticator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 
 import java.net.InetAddress;
@@ -199,6 +199,39 @@ public abstract class Provider extends LinkedList<Task> implements Task {
                 return true;
         }
         // TODO: Issue #70
+        return false;
+    }
+
+    public static final String PREF_SSID_CUSTOM = "pref_ssid_custom";
+    public static final String PREF_SSID_DISABLED = "pref_ssid_disabled";
+
+    /** User-defined SSIDs (one per line or comma-separated). */
+    @NonNull public static List<String> getCustomSSIDs(Context context) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        List<String> result = new LinkedList<>();
+        for (String item : settings.getString(PREF_SSID_CUSTOM, "").split("[,\\n]")) {
+            String ssid = item.trim();
+            if (!ssid.isEmpty()) result.add(ssid);
+        }
+        return result;
+    }
+
+    public static boolean isSSIDDisabled(Context context, String SSID) {
+        if (SSID == null) return false;
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        for (String disabled : settings.getStringSet(PREF_SSID_DISABLED, new java.util.HashSet<>())) {
+            if (disabled.equalsIgnoreCase(SSID)) return true;
+        }
+        return false;
+    }
+
+    /** Built-in or user-defined SSID that the user has not disabled. */
+    public static boolean isSSIDSupported(Context context, String SSID) {
+        if (SSID == null || isSSIDDisabled(context, SSID)) return false;
+        if (isSSIDSupported(SSID)) return true;
+        for (String custom : getCustomSSIDs(context)) {
+            if (custom.equalsIgnoreCase(SSID)) return true;
+        }
         return false;
     }
 

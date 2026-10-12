@@ -18,26 +18,24 @@
 
 package pw.thedrhax.mosmetro.preferences;
 
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 
 import com.edmodo.rangebar.RangeBar;
 
 import pw.thedrhax.mosmetro.R;
 import pw.thedrhax.util.Util;
 
-public class RangeBarPreference extends DialogPreference {
+public class RangeBarPreference extends Preference {
 
-    @TargetApi(21)
     public RangeBarPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
@@ -53,15 +51,11 @@ public class RangeBarPreference extends DialogPreference {
         init(context, attrs);
     }
 
-    @TargetApi(21)
     public RangeBarPreference(Context context) {
         super(context);
     }
 
-    private String key_min = getKey() + "_min";
-    private String key_max = getKey() + "_max";
-
-    private int defaultMin, defaultMax, min, max, step;
+    private int defaultMin = 1, defaultMax = 10, min = 1, max = 10, step = 1;
 
     private void init(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RangeBarPreference, 0, 0);
@@ -73,54 +67,36 @@ public class RangeBarPreference extends DialogPreference {
         step = ta.getInt(R.styleable.RangeBarPreference_step, 1);
 
         ta.recycle();
+        setPersistent(false);
     }
 
     @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
+    protected void onClick() {
+        final String key_min = getKey() + "_min";
+        final String key_max = getKey() + "_max";
 
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
         final View view = View.inflate(getContext(), R.layout.rangebar_preference, null);
-        final RangeBar rangebar = (RangeBar) view.findViewById(R.id.rangebar);
+        final RangeBar rangebar = view.findViewById(R.id.rangebar);
+        final TextView rangetext = view.findViewById(R.id.rangetext);
 
         rangebar.setTickCount((max - min) / step + 1);
-        rangebar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-            private TextView rangetext = (TextView) view.findViewById(R.id.rangetext);
+        rangebar.setOnRangeBarChangeListener((rangeBar, left, right) ->
+                rangetext.setText("" + (left * step + min) + " - " + (right * step + min)));
 
-            @Override
-            public void onIndexChangeListener(RangeBar rangeBar, int left, int right) {
-                if (left < min || left > max) {
-                    rangeBar.setLeft(min); return;
-                }
+        int current_min = Math.max(min, Util.getIntPreference(getContext(), key_min, defaultMin));
+        int current_max = Math.min(max, Util.getIntPreference(getContext(), key_max, defaultMax));
 
-                if (right < min || right > max) {
-                    rangeBar.setRight(max); return;
-                }
+        rangebar.setThumbIndices((current_min - min) / step, (current_max - min) / step);
 
-                rangetext.setText("" + (left + min) * step + " - " + (right + min) * step);
-            }
-        });
-
-        int current_min = Util.getIntPreference(getContext(), key_min, defaultMin);
-        if (current_min < min)
-            current_min = min;
-
-        int current_max = Util.getIntPreference(getContext(), key_max, defaultMax);
-        if (current_max > max)
-            current_max = max;
-
-        rangebar.setThumbIndices(current_min / step, current_max / step);
-
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                settings.edit()
+        new AlertDialog.Builder(getContext())
+                .setTitle(getTitle())
+                .setView(view)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> settings.edit()
                         .putInt(key_min, rangebar.getLeftIndex() * step + min)
                         .putInt(key_max, rangebar.getRightIndex() * step + min)
-                        .apply();
-            }
-        });
-
-        builder.setView(view);
+                        .apply())
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 }

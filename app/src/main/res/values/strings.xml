@@ -309,4 +309,39 @@
     <string name="pref_debug_stats_summary">App will collect anonymous metrics about connections. In addition to fully internal metrics (app version, algorithm, etc.) reports may include OS version and the name of the Wi-Fi network.</string>
     <string name="pref_byfly_summary">This algorithm is required to connect to \"BELTELECOM\" and \"byfly WIFI\" — paid Wi-Fi networks in Belarus.</string>
     <string name="pref_byfly">ByFly (Beltelecom)</string>
+
+    <!-- 2.9.0 -->
+    <string name="channel_service">Background service</string>
+    <string name="channel_service_summary">Persistent notification while waiting for Wi‑Fi or logging in</string>
+    <string name="channel_result">Login results</string>
+    <string name="channel_result_summary">Success, errors and sign-in prompts</string>
+    <string name="channel_updates">Updates</string>
+    <string name="channel_updates_summary">New WifiMetro releases</string>
+    <string name="update_message" formatted="false">Version %1$s is available (you have %2$s)</string>
+    <string name="update_downloading">Downloading update…</string>
+    <string name="update_open_page">Open page</string>
+    <string name="notification_tap_to_connect">Wi‑Fi available</string>
+    <string name="notification_tap_to_connect_summary">Tap to start WifiMetro login</string>
+    <string name="about_source">Source code</string>
+    <string name="about_source_summary" translatable="false">github.com/FoxDoCX/WifiMetro</string>
+    <string name="about_source_link" translatable="false">https://github.com/FoxDoCX/WifiMetro</string>
+    <string name="pref_history">Connection history</string>
+    <string name="pref_history_summary">Recent login attempts and results</string>
+    <string name="pref_history_empty">No connections yet</string>
+    <string name="pref_history_clear">Clear history</string>
+    <string name="pref_history_export">Export CSV</string>
+    <string name="pref_history_item" formatted="false">%1$s · %2$s · %3$s</string>
+    <string name="pref_ssid_custom">Custom SSIDs</string>
+    <string name="pref_ssid_custom_summary">One network name per line. Treated as supported for auto-login.</string>
+    <string name="pref_ssid_disabled_summary">Skip auto-login for this network</string>
+    <string name="pref_ssid_enable">Enable auto-login</string>
+    <string name="pref_ssid_disable">Disable auto-login</string>
+    <string name="tile_autoconnect">WifiMetro auto-login</string>
+    <string name="widget_status_label">WifiMetro status</string>
+    <string name="widget_status_idle">No recent login</string>
+    <string name="widget_status_ok" formatted="false">OK · %1$s</string>
+    <string name="widget_status_fail" formatted="false">Fail · %1$s</string>
+    <string name="pref_oem_autostart">Autostart (Xiaomi / HyperOS)</string>
+    <string name="pref_oem_autostart_summary">Open OEM settings so WifiMetro can start in background after reboot</string>
+    <string name="captive_fix_adb">No root? Run once from PC:\nadb shell pm grant pw.thedrhax.mosmetro android.permission.WRITE_SECURE_SETTINGS</string>
 </resources>

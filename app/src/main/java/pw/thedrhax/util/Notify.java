@@ -27,13 +27,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.ServiceCompat;
 
+import pw.thedrhax.mosmetro.R;
+
 public class Notify extends NotificationCompat.Builder {
     public static final String CHANNEL_ID = "MosMetroWIFIServiceChannel";
-    private static final String CHANNEL_NAME = "WifiMetro Service";
+    public static final String CHANNEL_RESULT = "wifimetro_result";
+    public static final String CHANNEL_UPDATES = "wifimetro_updates";
 
     private final Context context;
     private final NotificationManager nm;
@@ -51,15 +54,36 @@ public class Notify extends NotificationCompat.Builder {
         this.nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.settings = PreferenceManager.getDefaultSharedPreferences(context);
 
-        if (nm != null) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("WifiMetro foreground service");
-            channel.setShowBadge(false);
-            nm.createNotificationChannel(channel);
-        }
-
+        createChannels(context);
         priority(Util.getIntPreference(context, "pref_notify_priority", 0));
+    }
+
+    public static void createChannels(Context context) {
+        NotificationManager nm = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm == null) return;
+
+        NotificationChannel service = new NotificationChannel(CHANNEL_ID,
+                context.getString(R.string.channel_service), NotificationManager.IMPORTANCE_LOW);
+        service.setDescription(context.getString(R.string.channel_service_summary));
+        service.setShowBadge(false);
+
+        NotificationChannel result = new NotificationChannel(CHANNEL_RESULT,
+                context.getString(R.string.channel_result), NotificationManager.IMPORTANCE_DEFAULT);
+        result.setDescription(context.getString(R.string.channel_result_summary));
+        result.setSound(null, null);
+
+        NotificationChannel updates = new NotificationChannel(CHANNEL_UPDATES,
+                context.getString(R.string.channel_updates), NotificationManager.IMPORTANCE_DEFAULT);
+        updates.setDescription(context.getString(R.string.channel_updates_summary));
+
+        nm.createNotificationChannel(service);
+        nm.createNotificationChannel(result);
+        nm.createNotificationChannel(updates);
+    }
+
+    public Notify channel(String channel) {
+        setChannelId(channel); return this;
     }
 
     public Notify title(String title) {
@@ -131,7 +155,8 @@ public class Notify extends NotificationCompat.Builder {
     }
 
     public Notify show() {
-        if (!enabled) return this;
+        // A foreground service must still call startForeground() when notifications are disabled
+        if (!enabled && !(locked && context instanceof Service)) return this;
 
         Notification notification = build();
 

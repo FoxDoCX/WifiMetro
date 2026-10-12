@@ -34,7 +34,7 @@
         android:icon="@drawable/ic_notification_error_colored"
         android:defaultValue="false" />
 
-    <EditTextPreference
+    <pw.thedrhax.mosmetro.preferences.InputEditTextPreference
         android:key="pref_notify_priority"
         android:inputType="numberSigned"
         android:title="@string/pref_notify_priority"
