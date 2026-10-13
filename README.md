@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| **Версия** | 2.9.0 (versionCode 90) |
+| **Версия** | 2.9.1 (versionCode 91) |
 | **Package** | `pw.thedrhax.mosmetro` |
 | **minSdk** | 26 (Android 8.0) |
 | **targetSdk** | 36 (Android 16) |

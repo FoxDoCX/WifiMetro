@@ -10,21 +10,25 @@ WifiMetro — полный список изменений относитель�
 
 Текущая сборка:
   Название     : WifiMetro
-  versionName  : 2.9.0
-  versionCode  : 90 (ABI-сплиты: v7a → 901, arm64 → 902)
+  versionName  : 2.9.1
+  versionCode  : 91 (ABI-сплиты: v7a→911, arm64→912, x86→913, x86_64→914)
   Автор сборки : FoxDoC
-  Дата отчёта  : 2026-10-13
+  Дата отчёта  : 2026-10-14
   Лицензия     : GPL-3.0 (без изменений)
 
 Артефакты:
-  dist/WifiMetro-2.9.0-FoxDoC-android16-arm64-v8a-release.apk
-  dist/WifiMetro-2.9.0-FoxDoC-android16-armeabi-v7a-release.apk
-  dist/WifiMetro-2.9.0-FoxDoC-android16-x86-release.apk
-  dist/WifiMetro-2.9.0-FoxDoC-android16-x86_64-release.apk
-  dist/WifiMetro-2.9.0-FoxDoC-android16-universal-release.apk
+  dist/WifiMetro-2.9.1-FoxDoC-android16-*-release.apk (arm64 / v7a / x86 / x86_64 / universal)
 
 ================================================================================
-0. 2.9.0 — FGS crash, AppCompat, GitHub updates, network callback
+0. 2.9.1 — layout: кнопки больше не уезжают за экран
+================================================================================
+
+- SystemBarUtils: корректный AppCompat ActionBar; без двойного top-padding
+- Диалоги Feedback/Shortcut: wrap_content, theme Dialog без edge-to-edge pads
+- Кнопки: minWidth=0, maxHeight на Debug connect
+
+================================================================================
+0a. 2.9.0 — FGS crash, AppCompat, GitHub updates, network callback
 ================================================================================
 
 - Краш после выдачи геолокации: ReceiverService всегда вызывает startForeground
