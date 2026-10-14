@@ -25,46 +25,4 @@
             <extra android:name="data" android:value="@string/about_source_link" />
         </intent>
     </Preference>
-
-    <PreferenceCategory android:title="@string/pref_category_contributors">
-        <Preference
-            android:title="@string/contirutor_revertron"
-            android:summary="@string/contributor_revertron_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.SafeViewActivity"
-                android:targetPackage="pw.thedrhax.mosmetro"
-                android:targetClass="pw.thedrhax.mosmetro.activities.SafeViewActivity">
-                <extra android:name="data" android:value="@string/contributor_revertron_link" />
-            </intent>
-        </Preference>
-
-        <Preference
-            android:title="@string/contributor_Mikhail_Kuropatkin"
-            android:summary="@string/contrinutor_Mikhail_Kuropatkin_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.SafeViewActivity"
-                android:targetPackage="pw.thedrhax.mosmetro"
-                android:targetClass="pw.thedrhax.mosmetro.activities.SafeViewActivity">
-                <extra android:name="data" android:value="@string/contributor_Mikhail_Kuropatkin_link" />
-            </intent>
-        </Preference>
-
-        <Preference
-            android:title="@string/contributor_Alexander_Krotov"
-            android:summary="@string/contributor_Alexander_Krotov_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.SafeViewActivity"
-                android:targetPackage="pw.thedrhax.mosmetro"
-                android:targetClass="pw.thedrhax.mosmetro.activities.SafeViewActivity">
-                <extra android:name="data" android:value="@string/contributor_Alexander_Krotov_link" />
-            </intent>
-        </Preference>
-
-        <Preference
-            android:title="@string/contributor_Igor_Dyatlov"
-            android:summary="@string/contributor_Igor_Dyatlov_summary">
-            <intent android:action="pw.thedrhax.mosmetro.activities.SafeViewActivity"
-                android:targetPackage="pw.thedrhax.mosmetro"
-                android:targetClass="pw.thedrhax.mosmetro.activities.SafeViewActivity">
-                <extra android:name="data" android:value="@string/contributor_Igor_Dyatlov_link" />
-            </intent>
-        </Preference>
-    </PreferenceCategory>
 </PreferenceScreen>

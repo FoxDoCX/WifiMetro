@@ -197,7 +197,7 @@
 
     <string name="receiver_auto_connect">Автоподключение</string>
     <string name="more_information">О приложении</string>
-    <string name="more_information_summary">Брендинг и благодарности open-source</string>
+    <string name="more_information_summary">Автор сборки, о проекте и исходный код</string>
     <string name="stop">Остановить</string>
     <string name="pref_notify_foreground">Приоритетный процесс</string>
     <string name="pref_notify_foreground_summary">Привязать фоновый процесс к уведомлению, чтобы предотвратить его уничтожение. Если вы выключите эту функцию, фоновый процесс будет убит, даже если вы просто откроете и закроете главное окно приложения.</string>
