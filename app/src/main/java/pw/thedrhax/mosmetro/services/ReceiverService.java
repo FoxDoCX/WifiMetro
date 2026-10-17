@@ -115,6 +115,7 @@ public class ReceiverService extends Service {
     }
 
     @Override
+    @androidx.annotation.RequiresApi(35)
     public void onTimeout(int startId, int fgsType) {
         // Android 15+: dataSync quota (6h/24h) exhausted; must stop within seconds or crash.
         notify.hide();

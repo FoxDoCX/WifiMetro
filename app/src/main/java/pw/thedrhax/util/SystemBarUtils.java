@@ -24,17 +24,26 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import pw.thedrhax.mosmetro.R;
 
 /**
- * Edge-to-edge insets for AppCompat ActionBar + content.
- * {@code setPadding} on {@code android.R.id.content} replaces AppCompat's ActionBar
- * inset — always recompute top padding from ActionBar position when they overlap.
+ * Window / system-bar insets for AppCompat ActionBar + content.
+ * <p>
+ * Android 14 and below: keep {@code decorFitsSystemWindows=true} — the platform
+ * lays out ActionBar and content correctly without manual padding.
+ * Android 15+: edge-to-edge is enforced (opt-out ignored on 16+), so we pad
+ * content ourselves. {@code setPadding} on {@code android.R.id.content} replaces
+ * AppCompat's ActionBar inset — recompute top padding when they overlap.
  */
 public final class SystemBarUtils {
     private SystemBarUtils() {}
 
+    /** Edge-to-edge padding path (API 35+). Older OS uses classic layout. */
+    private static boolean needsEdgeToEdge() {
+        return Build.VERSION.SDK_INT >= 35;
+    }
+
     /** Call before {@code super.onCreate()}. */
     public static void prepare(@NonNull Activity activity) {
         Window window = activity.getWindow();
-        WindowCompat.setDecorFitsSystemWindows(window, false);
+        WindowCompat.setDecorFitsSystemWindows(window, !needsEdgeToEdge());
         if (Build.VERSION.SDK_INT >= 21) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -47,6 +56,66 @@ public final class SystemBarUtils {
 
     /** Call after setContentView / PreferenceFragment attach. Idempotent. */
     public static void apply(@NonNull Activity activity) {
+        if (!needsEdgeToEdge()) {
+            applyClassic(activity);
+            return;
+        }
+        applyEdgeToEdge(activity);
+    }
+
+    /** Android 14 and below: system manages insets; only colors + small bottom gap. */
+    private static void applyClassic(@NonNull Activity activity) {
+        final Window window = activity.getWindow();
+        WindowCompat.setDecorFitsSystemWindows(window, true);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            int bar = barColor(activity);
+            window.setStatusBarColor(bar);
+            window.setNavigationBarColor(bar);
+        }
+        if (Build.VERSION.SDK_INT >= 29) {
+            window.setNavigationBarContrastEnforced(true);
+        }
+
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(window, window.getDecorView());
+        if (controller != null) {
+            controller.setAppearanceLightStatusBars(false);
+            controller.setAppearanceLightNavigationBars(false);
+        }
+
+        final View decor = window.getDecorView();
+        decor.setBackgroundColor(barColor(activity));
+
+        // Undo any edge-to-edge ActionBar margin left from a previous path / recreate
+        View actionBarContainer = findActionBarContainer(decor);
+        if (actionBarContainer != null) {
+            actionBarContainer.setBackgroundColor(actionBarBg(activity));
+            if (actionBarContainer.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams lp =
+                        (ViewGroup.MarginLayoutParams) actionBarContainer.getLayoutParams();
+                if (lp.topMargin != 0) {
+                    lp.topMargin = 0;
+                    actionBarContainer.setLayoutParams(lp);
+                }
+            }
+        }
+
+        final View content = activity.findViewById(android.R.id.content);
+        if (content == null) return;
+
+        content.setBackgroundColor(contentBg(activity));
+        ViewCompat.setOnApplyWindowInsetsListener(content, null);
+
+        // Small bottom breathing room; top is handled by ActionBar + decorFitsSystemWindows
+        int bottomGap = dp(activity, 16);
+        content.setPadding(0, 0, 0, bottomGap);
+
+        padScrollable(content.findViewById(androidx.preference.R.id.recycler_view));
+        padScrollable(content.findViewById(android.R.id.list));
+    }
+
+    private static void applyEdgeToEdge(@NonNull Activity activity) {
         final Window window = activity.getWindow();
         WindowCompat.setDecorFitsSystemWindows(window, false);
 
